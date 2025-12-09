@@ -1,4 +1,4 @@
-# MDCONVERT
+# EMP - Extended Markdown Parser
 
 Convert markdown files to HTML or PDF with professional templates. Everything runs in your browser - no server needed.
 
