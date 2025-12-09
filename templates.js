@@ -447,9 +447,9 @@ const templates = {
     <header class="project-header">
         <h1>${metadata.title || 'Project Documentation'}</h1>
         <div class="project-meta">
-            <span>📝 ${metadata.author || 'Unknown Author'}</span>
-            <span>📅 ${metadata.created || new Date().toISOString().split('T')[0]}</span>
-            <span>🔖 v${metadata.version || '1.0.0'}</span>
+            <span>Author: ${metadata.author || 'Unknown Author'}</span>
+            <span>Date: ${metadata.created || new Date().toISOString().split('T')[0]}</span>
+            <span>Version: v${metadata.version || '1.0.0'}</span>
         </div>
     </header>
     
@@ -477,36 +477,42 @@ const templates = {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${metadata.title || 'Academic Assignment'}</title>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Georgia', 'Times New Roman', serif;
+            font-family: 'EB Garamond', Georgia, 'Times New Roman', serif;
             line-height: 1.9;
-            color: #2d3748;
-            background: #ffffff;
+            color: #2b2a27;
+            background: #fffdf9;
             max-width: 800px;
             margin: 0 auto;
             padding: 3rem 2rem;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            hyphens: auto;
         }
         
         .header {
             text-align: center;
             margin-bottom: 3rem;
             padding-bottom: 2rem;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 2px solid #e5dbc8;
         }
         
         .header h1 {
-            font-size: 2rem;
+            font-size: 2.2rem;
             margin-bottom: 1rem;
-            color: #1a202c;
+            color: #1e262d;
+            letter-spacing: 0.02em;
+            font-variant: small-caps;
         }
         
         .header-info {
             font-size: 1rem;
-            color: #4a5568;
+            color: #6b6257;
             line-height: 1.6;
         }
         
@@ -515,13 +521,13 @@ const templates = {
         }
         
         h1, h2, h3, h4 {
-            color: #1a202c;
+            color: #1e262d;
             margin: 2rem 0 1rem;
         }
         
         h2 {
             font-size: 1.5rem;
-            border-bottom: 1px solid #cbd5e0;
+            border-bottom: 1px solid #e5dbc8;
             padding-bottom: 0.5rem;
         }
         
@@ -533,6 +539,17 @@ const templates = {
             text-align: justify;
             margin: 1rem 0;
             text-indent: 2rem;
+            hanging-punctuation: first;
+        }
+        /* Drop cap for first paragraph in sections */
+        main p:first-of-type::first-letter {
+            float: left;
+            font-size: 3.2rem;
+            line-height: 0.9;
+            padding-right: 0.1rem;
+            padding-top: 0.2rem;
+            color: #8c6d3a;
+            font-family: 'Crimson Text', 'EB Garamond', serif;
         }
         
         img {
@@ -543,8 +560,8 @@ const templates = {
         }
         
         pre {
-            background: #f7fafc;
-            border: 1px solid #e2e8f0;
+            background: #f6f2e9;
+            border: 1px solid #e5dbc8;
             padding: 1rem;
             border-radius: 4px;
             overflow-x: auto;
@@ -552,9 +569,9 @@ const templates = {
         }
         
         code {
-            font-family: 'Courier New', monospace;
+            font-family: 'Crimson Text', 'EB Garamond', serif;
             font-size: 0.9em;
-            background: #f7fafc;
+            background: #f6f2e9;
             padding: 0.2rem 0.4rem;
             border-radius: 3px;
         }
@@ -572,21 +589,21 @@ const templates = {
         
         th, td {
             padding: 0.75rem;
-            border: 1px solid #cbd5e0;
+            border: 1px solid #e5dbc8;
             text-align: left;
         }
         
         th {
-            background: #f7fafc;
+            background: #fffdf9;
             font-weight: 600;
         }
         
         blockquote {
-            border-left: 4px solid #4299e1;
+            border-left: 4px solid #8c6d3a;
             padding-left: 1rem;
             margin: 1.5rem 0;
             font-style: italic;
-            color: #4a5568;
+            color: #5a5247;
         }
         
         ul, ol {
@@ -601,10 +618,10 @@ const templates = {
         .footer {
             margin-top: 4rem;
             padding-top: 2rem;
-            border-top: 1px solid #e2e8f0;
+            border-top: 1px solid #e5dbc8;
             text-align: center;
             font-size: 0.9rem;
-            color: #718096;
+            color: #6b6257;
         }
         
         @media print {
@@ -635,6 +652,93 @@ const templates = {
         ${metadata.author || 'Student Name'} | ${new Date().getFullYear()}
     </div>
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script>Prism.highlightAll();</script>
+</body>
+</html>`;
+        }
+    },
+
+    'academic-classic': {
+        name: 'Academic Classic (Cambridge)',
+        generateHTML: function(content, metadata, toc) {
+            return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${metadata.title || 'Academic Paper'}</title>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'EB Garamond', Georgia, 'Times New Roman', serif;
+            color: #2b2a27;
+            background: #fffdf9;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            line-height: 1.85;
+            text-rendering: optimizeLegibility;
+            hyphens: auto;
+        }
+        header.title {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #e5dbc8;
+        }
+        header.title h1 {
+            font-size: 2.4rem;
+            letter-spacing: .02em;
+            color: #1e262d;
+            font-variant: small-caps;
+            margin-bottom: .5rem;
+        }
+        header.title .meta {
+            color: #6b6257;
+            font-size: 1rem;
+        }
+        .contents { margin: 1rem 0 2rem; }
+        .contents .table-of-contents {
+            background: #fffdf9; border: 1px solid #e5dbc8; border-radius: 6px; padding: 1.25rem;
+        }
+        .contents h2 { font-size: 1.15rem; color: #8c6d3a; letter-spacing: .06em; font-variant: small-caps; margin-bottom: .5rem; }
+        .contents ul { list-style: none; padding-left: 0; }
+        .contents li { margin: .4rem 0; }
+        .contents a { color: #5a5247; text-decoration: none; }
+        .contents a:hover { text-decoration: underline; color: #8c6d3a; }
+        main.content { margin-top: 1rem; }
+        h1, h2, h3, h4 { color: #1e262d; margin: 2rem 0 1rem; }
+        h2 { font-size: 1.6rem; border-bottom: 1px solid #e5dbc8; padding-bottom: .4rem; }
+        h3 { font-size: 1.3rem; }
+        p { text-align: justify; margin: 1rem 0; text-indent: 2rem; hanging-punctuation: first; }
+        main p:first-of-type::first-letter { float: left; font-size: 3.2rem; line-height: .9; padding-right: .15rem; padding-top: .28rem; color: #8c6d3a; font-family: 'Crimson Text', serif; }
+        blockquote { border-left: 4px solid #8c6d3a; padding-left: 1rem; margin: 1.5rem 0; font-style: italic; color: #5a5247; }
+        img { max-width: ${metadata.image_size || '80%'}; height: auto; display: block; margin: 1.5rem auto; border: 1px solid #e5dbc8; border-radius: 4px; }
+        pre { background: #f6f2e9; border: 1px solid #e5dbc8; padding: 1rem; border-radius: 4px; overflow-x: auto; margin: 1rem 0; }
+        code { font-family: 'Crimson Text', 'EB Garamond', serif; background: #f6f2e9; padding: .2rem .4rem; border-radius: 3px; }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+        th, td { padding: .75rem; border: 1px solid #e5dbc8; text-align: left; }
+        th { background: #fffdf9; font-weight: 600; }
+        footer.foot { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #e5dbc8; text-align: center; color: #6b6257; font-size: .95rem; }
+        @media print { body { max-width: 100%; padding: 1in; } .contents { page-break-after: always; } }
+    </style>
+</head>
+<body>
+    <header class="title">
+        <h1>${metadata.title || 'Academic Paper'}</h1>
+        <div class="meta">
+            <div>${metadata.author || 'Author Name'}</div>
+            <div>${metadata.institution ? metadata.institution + ' • ' : ''}${metadata.created || new Date().toISOString().split('T')[0]} • v${metadata.version || '1.0.0'}</div>
+        </div>
+    </header>
+    ${toc ? `<section class="contents">${toc}</section>` : ''}
+    <main class="content">${content}</main>
+    <footer class="foot">Prepared by ${metadata.author || 'Author'}</footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script>Prism.highlightAll();</script>

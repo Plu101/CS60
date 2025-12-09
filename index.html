@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown Document Converter</title>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 </head>
@@ -11,7 +12,7 @@
     <div class="app-container">
         <!-- Header -->
         <header class="app-header">
-            <h1>📄 Markdown Document Converter</h1>
+            <h1>Markdown Document Converter</h1>
             <p>Convert your markdown files to beautiful, ISO-compliant documents</p>
         </header>
 
@@ -20,7 +21,7 @@
             <!-- Left Panel - Controls -->
             <aside class="control-panel">
                 <section class="upload-section">
-                    <h2>📤 Upload Markdown</h2>
+                    <h2>Upload Markdown</h2>
                     <div class="upload-area" id="uploadArea">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -41,7 +42,7 @@
                 </section>
 
                 <section class="settings-section">
-                    <h2>⚙️ Document Settings</h2>
+                    <h2>Document Settings</h2>
                     
                     <div class="setting-group">
                         <label for="documentType">Document Type</label>
@@ -49,6 +50,7 @@
                             <option value="iso-compliant">ISO/IEC/IEEE 29148 Standard</option>
                             <option value="project">Project Documentation</option>
                             <option value="homework">Academic/Homework</option>
+                            <option value="academic-classic">Academic Classic (Cambridge)</option>
                             <option value="letter">Letter Format</option>
                             <option value="technical">Technical Report</option>
                             <option value="minimal">Minimal/Clean</option>
@@ -89,18 +91,18 @@
                 </section>
 
                 <section class="actions-section">
-                    <h2>💾 Export</h2>
+                    <h2>Export</h2>
                     <button class="btn btn-success" onclick="convertMarkdown()" id="convertBtn" disabled>
-                        🔄 Convert & Preview
+                        Convert & Preview
                     </button>
                     <button class="btn btn-primary" onclick="downloadHTML()" id="downloadHtmlBtn" disabled>
-                        ⬇️ Download HTML
+                        Download HTML
                     </button>
                     <button class="btn btn-secondary" onclick="downloadPDF()" id="downloadPdfBtn" disabled>
-                        📄 Download PDF
+                        Download PDF
                     </button>
                     <button class="btn btn-outline" onclick="printPreview()" id="printBtn" disabled>
-                        🖨️ Print
+                        Print
                     </button>
                 </section>
             </aside>
@@ -108,7 +110,7 @@
             <!-- Right Panel - Preview -->
             <main class="preview-panel">
                 <div class="preview-header">
-                    <h2>👁️ Live Preview</h2>
+                    <h2>Live Preview</h2>
                     <div class="preview-controls">
                         <button class="btn-icon" onclick="toggleFullscreen()" title="Fullscreen">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

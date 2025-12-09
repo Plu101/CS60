@@ -182,16 +182,17 @@ function convertMarkdown() {
         };
         
         const result = converter.convert(currentMarkdownText, options);
-        
-        document.getElementById('previewContent').innerHTML = result.preview;
-        
-        if (window.Prism) {
-            Prism.highlightAll();
-        }
-        
-        if (window.mermaid) {
-            mermaid.init(undefined, document.querySelectorAll('.mermaid'));
-        }
+
+        // Render full template inside an iframe so the preview matches export exactly
+        const htmlContent = converter.getConvertedHTML();
+        const iframe = document.createElement('iframe');
+        iframe.setAttribute('title', 'Document Preview');
+        iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox');
+        iframe.srcdoc = htmlContent;
+
+        const preview = document.getElementById('previewContent');
+        preview.innerHTML = '';
+        preview.appendChild(iframe);
         
         console.log('Conversion successful');
         
@@ -227,14 +228,23 @@ async function downloadPDF() {
     
     try {
         const htmlContent = converter.getConvertedHTML();
-        
-        const tempContainer = document.createElement('div');
-        tempContainer.innerHTML = htmlContent;
-        tempContainer.style.position = 'absolute';
-        tempContainer.style.left = '-9999px';
-        tempContainer.style.width = '210mm';
-        document.body.appendChild(tempContainer);
-        
+
+        // Use an offscreen iframe so template <head> styles/scripts apply
+        const pdfFrame = document.createElement('iframe');
+        pdfFrame.style.position = 'absolute';
+        pdfFrame.style.left = '-10000px';
+        pdfFrame.style.top = '0';
+        pdfFrame.style.width = '210mm';
+        pdfFrame.style.height = '297mm';
+        pdfFrame.setAttribute('sandbox', 'allow-same-origin allow-scripts');
+        document.body.appendChild(pdfFrame);
+
+        await new Promise((resolve, reject) => {
+            pdfFrame.onload = resolve;
+            pdfFrame.onerror = reject;
+            pdfFrame.srcdoc = htmlContent;
+        });
+
         const opt = {
             margin: [10, 10, 10, 10],
             filename: currentFileName.replace(/\.md$/, '') + '.pdf',
@@ -244,19 +254,13 @@ async function downloadPDF() {
                 useCORS: true,
                 logging: false
             },
-            jsPDF: { 
-                unit: 'mm', 
-                format: 'a4', 
-                orientation: 'portrait'
-            },
-            pagebreak: { 
-                mode: ['avoid-all', 'css', 'legacy']
-            }
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
         };
-        
-        await html2pdf().set(opt).from(tempContainer).save();
-        
-        document.body.removeChild(tempContainer);
+
+        await html2pdf().set(opt).from(pdfFrame.contentDocument.body).save();
+
+        document.body.removeChild(pdfFrame);
         
     } catch (error) {
         console.error('PDF generation error:', error);
@@ -272,12 +276,10 @@ function printPreview() {
     
     const htmlContent = converter.getConvertedHTML();
     const printWindow = window.open('', '_blank');
+    printWindow.document.open();
     printWindow.document.write(htmlContent);
     printWindow.document.close();
-    
-    printWindow.onload = function() {
-        printWindow.print();
-    };
+    printWindow.onload = function() { printWindow.print(); };
 }
 
 function toggleFullscreen() {

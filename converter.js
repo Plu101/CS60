@@ -1,4 +1,14 @@
 // Core markdown converter logic
+// Simple, safe HTML escape for fallback highlighting
+function escapeHtml(s) {
+    return (s || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 class MarkdownConverter {
     constructor() {
         this.md = null;
@@ -25,7 +35,7 @@ class MarkdownConverter {
                     }
                 }
                 return '<pre class="language-' + (lang || 'text') + '"><code>' + 
-                       this.md.utils.escapeHtml(str) + 
+                       escapeHtml(str) +
                        '</code></pre>';
             }
         });
