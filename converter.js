@@ -77,31 +77,45 @@ class MarkdownConverter {
             if (state.src.slice(pos, pos + 2) !== '$$') return false;
             
             pos += 2;
-            let firstLine = state.src.slice(pos, max);
+            let firstLine = state.src.slice(pos, max).trim();
             
-            if (firstLine.trim().endsWith('$$')) {
-                firstLine = firstLine.trim().slice(0, -2);
+            // Check if it's a single-line math block
+            if (firstLine.endsWith('$$')) {
+                const content = firstLine.slice(0, -2).trim();
+                if (!silent) {
+                    const token = state.push('math_block', 'math', 0);
+                    token.content = content;
+                    token.block = true;
+                    token.markup = '$$';
+                }
+                state.line = startLine + 1;
+                return true;
             }
             
+            // Multi-line math block
             let nextLine = startLine;
-            let lastLine = '';
+            const contentLines = [firstLine];
             
             // Find closing $$
             for (nextLine = startLine + 1; nextLine < endLine; nextLine++) {
                 pos = state.bMarks[nextLine] + state.tShift[nextLine];
                 max = state.eMarks[nextLine];
+                const line = state.src.slice(pos, max).trim();
                 
-                if (state.src.slice(pos, max).trim() === '$$') {
-                    lastLine = state.src.slice(state.bMarks[startLine + 1], state.eMarks[nextLine - 1]);
+                if (line === '$$') {
                     break;
                 }
+                
+                contentLines.push(state.src.slice(pos, max));
             }
             
-            const content = firstLine + '\n' + lastLine;
+            if (nextLine >= endLine) return false; // No closing found
+            
+            const content = contentLines.join('\n').trim();
             
             if (!silent) {
                 const token = state.push('math_block', 'math', 0);
-                token.content = content.trim();
+                token.content = content;
                 token.block = true;
                 token.markup = '$$';
             }
