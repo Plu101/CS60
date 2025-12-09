@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Start - Markdown Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        
+        h2 {
+            color: #444;
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        h3 {
+            color: #555;
+            font-size: 1.3rem;
+            margin: 1.5rem 0 0.5rem;
+        }
+        
+        p {
+            margin: 1rem 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            margin: 1rem 1rem 1rem 0;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #48bb78;
+        }
+        
+        .btn-secondary:hover {
+            background: #38a169;
+        }
+        
+        .steps {
+            list-style: none;
+            counter-reset: step-counter;
+            margin: 1.5rem 0;
+        }
+        
+        .steps li {
+            counter-increment: step-counter;
+            margin: 1.5rem 0;
+            padding-left: 3rem;
+            position: relative;
+        }
+        
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2rem;
+            height: 2rem;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .feature-card {
+            background: #f7fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .feature-card h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        
+        code {
+            background: #f1f5f9;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+        
+        .templates {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .template-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .alert {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1.5rem 0;
+        }
+        
+        .alert-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📄 Markdown Document Converter</h1>
+        <p class="subtitle">Transform your markdown files into beautiful, professional documents</p>
+        
+        <div style="text-align: center; margin: 2rem 0;">
+            <a href="index.html" class="btn">🚀 Launch Converter</a>
+            <a href="sample.md" class="btn btn-secondary" download>📥 Download Sample</a>
+        </div>
+        
+        <h2>🎯 Quick Start Guide</h2>
+        
+        <ol class="steps">
+            <li>
+                <strong>Open the Converter</strong><br>
+                Click the "Launch Converter" button above to open the main application.
+            </li>
+            <li>
+                <strong>Upload Your Markdown File</strong><br>
+                Drag and drop your <code>.md</code> file onto the upload area, or click "Browse Files" to select it.
+            </li>
+            <li>
+                <strong>Choose a Template</strong><br>
+                Select from 6 professional templates based on your document type (ISO, Project, Homework, Letter, etc.).
+            </li>
+            <li>
+                <strong>Customize Settings</strong><br>
+                Adjust image size, enable/disable Table of Contents, and configure document-specific options.
+            </li>
+            <li>
+                <strong>Convert & Preview</strong><br>
+                Click "Convert & Preview" to see your document rendered in real-time.
+            </li>
+            <li>
+                <strong>Export Your Document</strong><br>
+                Download as HTML, generate a PDF, or print directly from your browser.
+            </li>
+        </ol>
+        
+        <h2>✨ Key Features</h2>
+        
+        <div class="features">
+            <div class="feature-card">
+                <h4>🎨 6 Templates</h4>
+                <p>Choose from ISO-compliant, project docs, academic, letter, technical report, or minimal styles.</p>
+            </div>
+            <div class="feature-card">
+                <h4>📋 YAML Metadata</h4>
+                <p>Add frontmatter with title, author, version, and custom fields for each template.</p>
+            </div>
+            <div class="feature-card">
+                <h4>🔍 Live Preview</h4>
+                <p>See your document rendered in real-time as you adjust settings.</p>
+            </div>
+            <div class="feature-card">
+                <h4>💾 Multiple Exports</h4>
+                <p>Download as self-contained HTML or print-ready PDF files.</p>
+            </div>
+            <div class="feature-card">
+                <h4>🎯 Syntax Highlighting</h4>
+                <p>Beautiful code highlighting for 20+ programming languages.</p>
+            </div>
+            <div class="feature-card">
+                <h4>📱 Responsive</h4>
+                <p>Works perfectly on desktop, tablet, and mobile devices.</p>
+            </div>
+        </div>
+        
+        <h2>📚 Available Templates</h2>
+        
+        <div class="templates">
+            <div class="template-box">ISO/IEC/IEEE 29148</div>
+            <div class="template-box">Project Docs</div>
+            <div class="template-box">Academic/Homework</div>
+            <div class="template-box">Letter Format</div>
+            <div class="template-box">Technical Report</div>
+            <div class="template-box">Minimal/Clean</div>
+        </div>
+        
+        <h2>📝 Markdown Syntax</h2>
+        
+        <h3>YAML Frontmatter</h3>
+        <p>Add metadata at the beginning of your file:</p>
+        <pre style="background: #f1f5f9; padding: 1rem; border-radius: 6px; overflow-x: auto;">---
+title: My Document
+author: Your Name
+version: 1.0.0
+created: 2025-12-09
+description: Document description
+---</pre>
+        
+        <h3>Supported Markdown Features</h3>
+        <ul style="margin: 1rem 0; padding-left: 2rem;">
+            <li>Headers (H1-H6)</li>
+            <li>Bold, italic, strikethrough</li>
+            <li>Lists (ordered, unordered, task lists)</li>
+            <li>Code blocks with syntax highlighting</li>
+            <li>Tables</li>
+            <li>Blockquotes</li>
+            <li>Images</li>
+            <li>Links (external and internal)</li>
+            <li>Horizontal rules</li>
+            <li>Mermaid diagrams</li>
+        </ul>
+        
+        <div class="alert">
+            <span class="alert-icon">💡</span>
+            <strong>Tip:</strong> Download the sample markdown file to see examples of all supported features and proper YAML frontmatter formatting.
+        </div>
+        
+        <h2>🔧 System Requirements</h2>
+        
+        <ul style="margin: 1rem 0; padding-left: 2rem;">
+            <li>Modern web browser (Chrome, Firefox, Safari, Edge)</li>
+            <li>JavaScript enabled</li>
+            <li>Internet connection (for loading CDN libraries)</li>
+            <li>No installation or server required</li>
+        </ul>
+        
+        <h2>🚀 Ready to Start?</h2>
+        
+        <p>Click the button below to launch the converter and start creating beautiful documents!</p>
+        
+        <div style="text-align: center; margin: 2rem 0;">
+            <a href="index.html" class="btn" style="font-size: 1.2rem; padding: 1.25rem 2.5rem;">🎉 Launch Markdown Converter</a>
+        </div>
+        
+        <hr style="margin: 2rem 0; border: none; border-top: 1px solid #e2e8f0;">
+        
+        <p style="text-align: center; color: #666; font-size: 0.9rem;">
+            Version 1.0.0 | December 2025<br>
+            Built with markdown-it, Prism.js, and html2pdf.js
+        </p>
+    </div>
+</body>
+</html>

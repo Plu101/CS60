@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Document Converter</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1>📄 Markdown Document Converter</h1>
+            <p>Convert your markdown files to beautiful, ISO-compliant documents</p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Panel - Controls -->
+            <aside class="control-panel">
+                <section class="upload-section">
+                    <h2>📤 Upload Markdown</h2>
+                    <div class="upload-area" id="uploadArea">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p>Drag & drop your .md file here</p>
+                        <p class="or-text">or</p>
+                        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                            Browse Files
+                        </button>
+                        <input type="file" id="fileInput" accept=".md,.markdown" style="display: none;">
+                    </div>
+                    <div class="file-info" id="fileInfo" style="display: none;">
+                        <span class="file-name" id="fileName"></span>
+                        <button class="btn-icon" onclick="clearFile()" title="Remove file">✕</button>
+                    </div>
+                </section>
+
+                <section class="settings-section">
+                    <h2>⚙️ Document Settings</h2>
+                    
+                    <div class="setting-group">
+                        <label for="documentType">Document Type</label>
+                        <select id="documentType" onchange="updateTemplate()">
+                            <option value="iso-compliant">ISO/IEC/IEEE 29148 Standard</option>
+                            <option value="project">Project Documentation</option>
+                            <option value="homework">Academic/Homework</option>
+                            <option value="letter">Letter Format</option>
+                            <option value="technical">Technical Report</option>
+                            <option value="minimal">Minimal/Clean</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="imageSize">Image Size (%)</label>
+                        <input type="range" id="imageSize" min="20" max="100" value="80" step="5">
+                        <span id="imageSizeValue">80%</span>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>
+                            <input type="checkbox" id="showToc" checked>
+                            Show Table of Contents
+                        </label>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>
+                            <input type="checkbox" id="enableSyntaxHighlight" checked>
+                            Enable Syntax Highlighting
+                        </label>
+                    </div>
+
+                    <div class="setting-group" id="isoSettings" style="display: none;">
+                        <h3>ISO Compliance Settings</h3>
+                        <label for="isoDocType">ISO Document Type</label>
+                        <select id="isoDocType">
+                            <option value="StRS">StRS - Stakeholder Requirements</option>
+                            <option value="SyRS">SyRS - System Requirements</option>
+                            <option value="SRS">SRS - Software Requirements</option>
+                            <option value="BRS">BRS - Business Requirements</option>
+                            <option value="OpsCon">OpsCon - Operational Concept</option>
+                        </select>
+                    </div>
+                </section>
+
+                <section class="actions-section">
+                    <h2>💾 Export</h2>
+                    <button class="btn btn-success" onclick="convertMarkdown()" id="convertBtn" disabled>
+                        🔄 Convert & Preview
+                    </button>
+                    <button class="btn btn-primary" onclick="downloadHTML()" id="downloadHtmlBtn" disabled>
+                        ⬇️ Download HTML
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadPDF()" id="downloadPdfBtn" disabled>
+                        📄 Download PDF
+                    </button>
+                    <button class="btn btn-outline" onclick="printPreview()" id="printBtn" disabled>
+                        🖨️ Print
+                    </button>
+                </section>
+            </aside>
+
+            <!-- Right Panel - Preview -->
+            <main class="preview-panel">
+                <div class="preview-header">
+                    <h2>👁️ Live Preview</h2>
+                    <div class="preview-controls">
+                        <button class="btn-icon" onclick="toggleFullscreen()" title="Fullscreen">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="preview-content" id="previewContent">
+                    <div class="placeholder">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <h3>No document loaded</h3>
+                        <p>Upload a markdown file to see the preview</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Markdown Document Converter v1.0.0 | Supports YAML frontmatter, ISO 29148, and multiple templates</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.2/markdown-it.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="markdown-it-anchor.js"></script>
+    <script src="markdown-it-toc.js"></script>
+    <script src="templates.js"></script>
+    <script src="converter.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
