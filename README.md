@@ -1,251 +1,82 @@
-# 📄 Markdown Document Converter
+# MDCONVERT
 
-A powerful, client-side markdown to HTML/PDF converter with multiple professional templates and ISO 29148 compliance.
+Convert markdown files to HTML or PDF with professional templates. Everything runs in your browser - no server needed.
 
-## ✨ Features
+## What it does
 
-- **Multiple Templates**: Choose from 6 professional document templates
-  - ISO/IEC/IEEE 29148 Standard (regulatory compliance)
-  - Project Documentation (modern tech docs)
-  - Academic/Homework (education-friendly)
-  - Letter Format (formal correspondence)
-  - Technical Report (research & engineering)
-  - Minimal/Clean (simple & elegant)
+Drop in a `.md` file and get a nicely formatted document. Pick from 7 templates (academic papers, technical reports, letters, homework, etc.), tweak some settings, and export to HTML or PDF.
 
-- **Advanced Markdown Support**
-  - YAML frontmatter for metadata
-  - Automatic Table of Contents generation
-  - Syntax highlighting for code blocks
-  - Tables, blockquotes, lists
-  - Images with size control
-  - Mermaid diagrams support
+Images get embedded automatically so your exports are self-contained. Works with YAML frontmatter for metadata, syntax highlighting for code, mermaid diagrams, and auto-generates a table of contents.
 
-- **Export Options**
-  - Download as HTML (self-contained)
-  - Generate PDF (print-ready)
-  - Direct print preview
+## How to use it
 
-- **User-Friendly Interface**
-  - Drag & drop file upload
-  - Live preview
-  - Responsive design
-  - Dark mode support
-  - Customizable settings
+1. Open `index.html` in your browser
+2. Drag in a markdown file
+3. Pick a template
+4. Hit convert
+5. Download HTML or PDF
 
-## 🚀 Getting Started
+That's it.
 
-### Installation
-
-1. Download all files to a directory
-2. Open `index.html` in a modern web browser
-3. No server or build process required!
-
-### Usage
-
-1. **Upload Markdown File**
-   - Drag & drop your `.md` file onto the upload area
-   - Or click "Browse Files" to select a file
-
-2. **Configure Settings**
-   - Choose document type
-   - Adjust image size
-   - Toggle Table of Contents
-   - Enable/disable syntax highlighting
-
-3. **Convert & Export**
-   - Click "Convert & Preview" to see live preview
-   - Download as HTML or PDF
-   - Print directly from browser
-
-## 📝 Markdown Format
-
-### YAML Frontmatter
-
-Add metadata at the beginning of your markdown file:
+## YAML frontmatter example
 
 ```yaml
 ---
-title: My Document Title
+title: Document Title
 author: Your Name
+date: 2025-12-09
 version: 1.0.0
-created: 2025-12-09
-description: Document description
-keywords: markdown, documentation
-status: Draft
-
-# ISO-specific (for ISO template)
-document_type: StRS
-project_id: PRJ-2025-001
-classification: Internal
-
-# Academic-specific (for homework template)
-course: CS 101
-instructor: Dr. Smith
-institution: University Name
-
-# Letter-specific (for letter template)
-sender_name: John Doe
-sender_address: 123 Main St
-recipient_name: Jane Smith
-salutation: Dear Jane,
-closing: Best regards,
 ---
 ```
 
-### Markdown Content
+Different templates use different metadata fields. The metadata editor shows you what's available for each template.
 
-Write your content using standard markdown syntax:
+## Templates
 
-```markdown
-# Main Heading
+- **Academic** - Research papers with EB Garamond font
+- **ISO Compliant** - Meets ISO/IEC/IEEE 29148 standards
+- **Project** - Modern docs for software projects
+- **Homework** - School assignments
+- **Letter** - Formal correspondence
+- **Technical** - Engineering reports with IBM Plex fonts
+- **Minimal** - Clean and simple
 
-## Section Heading
+## Features
 
-This is a paragraph with **bold** and *italic* text.
+- Drag and drop upload
+- Live preview
+- File reference detection (prompts you to upload missing images)
+- Metadata editor for documents without frontmatter
+- Dark mode
+- Collapsible guide panel with syntax examples
+- Everything stays in your browser
 
-### Code Example
+## Tech stack
 
-```python
-def hello_world():
-    print("Hello, World!")
-```
+Built with markdown-it, js-yaml, Prism.js, html2pdf.js, and Mermaid. All loaded from CDNs.
 
-### Lists
+Works in any modern browser (Chrome, Firefox, Safari, Edge).
 
-- Bullet point 1
-- Bullet point 2
+## License
 
-1. Numbered item 1
-2. Numbered item 2
+MIT License
 
-### Tables
+Copyright (c) 2025
 
-| Column 1 | Column 2 |
-|----------|----------|
-| Data 1   | Data 2   |
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-### Images
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-![Alt text](image.png)
-
-### Blockquotes
-
-> This is a quote
-```
-
-## 🎨 Templates
-
-### ISO/IEC/IEEE 29148 Standard
-- Professional header with document metadata
-- Table of Contents sidebar
-- Regulatory compliance formatting
-- Version history support
-- Approval section
-
-### Project Documentation
-- Modern gradient header
-- Clean navigation
-- Developer-friendly styling
-- Code-focused design
-
-### Academic/Homework
-- Traditional academic format
-- Center-aligned header
-- Serif font for readability
-- Print-optimized layout
-
-### Letter Format
-- Formal business letter style
-- Sender/recipient information
-- Professional spacing
-- Single column layout
-
-### Technical Report
-- Cover page design
-- Professional gradient themes
-- Technical content focus
-- Multi-section support
-
-### Minimal/Clean
-- GitHub-style markdown
-- Minimalist design
-- Maximum readability
-- No sidebar distraction
-
-## 🛠️ Technical Details
-
-### Dependencies (CDN-loaded)
-
-- **markdown-it** v13.0.2 - Markdown parser
-- **js-yaml** v4.1.0 - YAML frontmatter parser
-- **Prism.js** v1.29.0 - Syntax highlighting
-- **html2pdf.js** v0.10.1 - PDF generation
-- **Mermaid** v10+ - Diagram rendering
-
-### Browser Compatibility
-
-- Chrome/Edge 90+
-- Firefox 88+
-- Safari 14+
-- Opera 76+
-
-### File Structure
-
-```
-e:\CS60\
-├── index.html              # Main application page
-├── styles.css              # Application styling
-├── app.js                  # Main application logic
-├── converter.js            # Markdown conversion engine
-├── templates.js            # Document templates
-├── markdown-it-anchor.js   # Heading anchors plugin
-├── markdown-it-toc.js      # Table of contents plugin
-├── README.md               # This file
-└── sample.md               # Sample markdown file
-```
-
-## 💡 Tips & Best Practices
-
-1. **Image Optimization**: Optimize images before embedding for better performance
-2. **Metadata Completeness**: Fill all relevant frontmatter fields for best results
-3. **Template Selection**: Choose template based on your document's purpose
-4. **Browser Testing**: Test PDF export in your target browser
-5. **File Organization**: Keep images in relative paths for portability
-
-## 🔧 Customization
-
-### Adding New Templates
-
-Edit `templates.js` and add a new template object:
-
-```javascript
-'custom-template': {
-    name: 'Custom Template',
-    generateHTML: function(content, metadata, toc) {
-        // Your custom HTML template
-        return `<!DOCTYPE html>...`;
-    }
-}
-```
-
-### Modifying Styles
-
-Edit `styles.css` to customize the application interface or preview styling.
-
-## 📄 License
-
-This project is free to use for personal and commercial purposes.
-
-## 🤝 Contributing
-
-Feel free to fork, modify, and enhance this converter for your needs!
-
-## 📞 Support
-
-For issues or questions, please check the code comments or create an issue.
-
----
-
-**Version**: 1.0.0  
-**Last Updated**: December 9, 2025  
-**Developed with**: JavaScript, markdown-it, html2pdf.js
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
