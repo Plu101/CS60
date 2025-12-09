@@ -76,6 +76,8 @@ class MarkdownConverter {
             if (pos + 2 > max) return false;
             if (state.src.slice(pos, pos + 2) !== '$$') return false;
             
+            if (!silent) console.log('Math block detected at line', startLine);
+            
             pos += 2;
             let firstLine = state.src.slice(pos, max).trim();
             
@@ -127,11 +129,17 @@ class MarkdownConverter {
         // Render inline math
         this.md.renderer.rules.math_inline = function(tokens, idx) {
             try {
-                return window.katex.renderToString(tokens[idx].content, {
+                if (!window.katex) {
+                    console.error('KaTeX not loaded!');
+                    return '<span style="color: red;">KaTeX not loaded</span>';
+                }
+                const result = window.katex.renderToString(tokens[idx].content, {
                     throwOnError: false,
                     displayMode: false
                 });
+                return result;
             } catch (e) {
+                console.error('Math inline error:', e);
                 return '<span style="color: red;">Math Error: ' + escapeHtml(e.message) + '</span>';
             }
         };
@@ -139,11 +147,17 @@ class MarkdownConverter {
         // Render block math
         this.md.renderer.rules.math_block = function(tokens, idx) {
             try {
-                return '<div class="math-block">' + window.katex.renderToString(tokens[idx].content, {
+                if (!window.katex) {
+                    console.error('KaTeX not loaded!');
+                    return '<div style="color: red;">KaTeX not loaded</div>';
+                }
+                const result = window.katex.renderToString(tokens[idx].content, {
                     throwOnError: false,
                     displayMode: true
-                }) + '</div>';
+                });
+                return '<div class="math-block">' + result + '</div>';
             } catch (e) {
+                console.error('Math block error:', e);
                 return '<div style="color: red;">Math Error: ' + escapeHtml(e.message) + '</div>';
             }
         };
