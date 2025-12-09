@@ -1,0 +1,57 @@
+v1.2.0 - 2025-12-09 (Advanced Features)
+- Added collapsible guide panel with markdown syntax and YAML structure reference
+- Implemented file reference detection for images and attachments
+- Added upload prompt for missing file references with automatic embedding
+- Created metadata editor as overlay card on preview window
+- Template-specific metadata fields with smart defaults
+- Automatic YAML generation and injection from metadata form
+- Guide panel slides from right side with comprehensive syntax examples
+- File references panel shows as centered card overlay
+- Improved ISO compliance settings with modern card design
+- Fixed preview placeholder centering and margins
+
+v1.1.1 - 2025-12-09 (Template Polish)
+- Replaced emoji icons with flat SVG icons for all templates
+- Fixed preview placeholder styling with proper margins and centering
+- Added base target to letter template for proper link behavior
+- Completely redesigned technical template with IBM Plex fonts
+- Technical template now matches academic-classic quality
+- Improved typography and spacing across all templates
+- Fixed inline code styling with proper highlighting
+- Enhanced table styling with alternating row colors
+
+v1.1.0 - 2025-12-09 (Modern Redesign)
+- Complete modern redesign inspired by BRANDLESSE aesthetic
+- Fixed file upload button - now clickable upload zone with drag-drop
+- Added dark/light theme toggle with localStorage persistence
+- Implemented loading indicators for conversions
+- Redesigned with minimal black/white color scheme
+- Added smooth animations and transitions throughout
+- Implemented collapsible sections for cleaner UI
+- Redesigned template selector with icon grid
+- Added modern toggle switches and range sliders
+- Responsive layout for mobile devices
+- Inter font family for modern typography
+- Streamlined button designs with icons
+
+v1.0.1 - 2025-12-09
+- Added nested collapsible TOC with individual heading collapse functionality
+- Fixed iframe links opening within preview by adding base target="_parent"
+- Removed drop cap spacing issues in academic templates
+- Fixed academic-classic template TOC CSS selectors to properly target nested structure
+- Enhanced page styling with gradient backgrounds and improved shadows
+- Added Help link in header linking to quick-start guide
+- Improved button styling with gradients and hover effects
+- Enhanced upload area with better visual feedback
+- Updated quick-start page to match academic library theme
+- Added back link in quick-start guide
+
+v1.0.0 - Initial Release
+- Static markdown to HTML/PDF converter
+- 6 professional document templates
+- YAML frontmatter support
+- Table of contents generation
+- Syntax highlighting with Prism.js
+- Academic library theme with earthy tones
+- Drag-and-drop file upload
+- Template selection with visual cards

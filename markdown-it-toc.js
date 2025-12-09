@@ -30,28 +30,41 @@ window.markdownItToc = {
 function generateTOC(headings) {
     if (!headings || headings.length === 0) return '';
     
-    let toc = '<nav class="table-of-contents"><h2>Table of Contents</h2><ul>';
-    let currentLevel = 0;
+    let toc = '<nav class="table-of-contents"><h2>Table of Contents</h2>';
     
-    headings.forEach(heading => {
-        if (heading.level > currentLevel) {
-            for (let i = currentLevel; i < heading.level; i++) {
-                toc += '<ul>';
+    function buildNestedTOC(items, startIndex, parentLevel) {
+        let html = '<ul>';
+        let i = startIndex;
+        
+        while (i < items.length) {
+            const item = items[i];
+            
+            if (item.level < parentLevel) {
+                break;
             }
-        } else if (heading.level < currentLevel) {
-            for (let i = heading.level; i < currentLevel; i++) {
-                toc += '</ul>';
+            
+            if (item.level === parentLevel) {
+                let hasChildren = (i + 1 < items.length && items[i + 1].level > item.level);
+                
+                if (hasChildren) {
+                    html += `<li class="has-children"><span class="toc-toggle" data-target="toc-item-${i}">▶</span> <a href="#${item.id}">${item.content}</a>`;
+                    const childResult = buildNestedTOC(items, i + 1, item.level + 1);
+                    html += `<div class="toc-children collapsed" id="toc-item-${i}">${childResult.html}</div></li>`;
+                    i = childResult.nextIndex;
+                } else {
+                    html += `<li><a href="#${item.id}">${item.content}</a></li>`;
+                    i++;
+                }
+            } else {
+                break;
             }
         }
         
-        toc += `<li><a href="#${heading.id}">${heading.content}</a></li>`;
-        currentLevel = heading.level;
-    });
-    
-    for (let i = 0; i < currentLevel; i++) {
-        toc += '</ul>';
+        html += '</ul>';
+        return { html: html, nextIndex: i };
     }
     
-    toc += '</nav>';
+    const result = buildNestedTOC(headings, 0, headings[0]?.level || 1);
+    toc += result.html + '</nav>';
     return toc;
 }

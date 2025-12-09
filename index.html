@@ -3,64 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Markdown Document Converter</title>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <title>(EMP) Extended Markdown Parser</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles-new.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 </head>
 <body>
+    <!-- Loading Indicator -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p>Processing...</p>
+    </div>
+
     <div class="app-container">
         <!-- Header -->
         <header class="app-header">
-            <h1>Markdown Document Converter</h1>
-            <p>Convert your markdown files to beautiful, ISO-compliant documents</p>
+            <div class="header-content">
+                <div class="logo">
+                    <h1>E.M.P <span>Extended Markdown Parser</span></h1>
+                </div>
+                <nav class="header-nav">
+                    <button class="btn-guide" id="guideBtn" title="Show guide">Guide</button>
+                    <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </nav>
+            </div>
         </header>
 
         <!-- Main Content -->
-        <div class="main-content">
-            <!-- Left Panel - Controls -->
-            <aside class="control-panel">
-                <section class="upload-section">
-                    <h2>Upload Markdown</h2>
-                    <div class="upload-area" id="uploadArea">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="17 8 12 3 7 8"></polyline>
-                            <line x1="12" y1="3" x2="12" y2="15"></line>
+        <main class="main-content">
+            <!-- Upload Section -->
+            <section class="hero-section">
+                <div class="hero-text">
+                    <h2 class="animate-in">Transform Markdown</h2>
+                    <p class="animate-in">Convert your .md files into professional documents with one click</p>
+                </div>
+                
+                <div class="upload-zone animate-in" id="uploadZone">
+                    <input type="file" id="fileInput" accept=".md,.markdown" hidden>
+                    <div class="upload-content" id="uploadContent">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
                         </svg>
-                        <p>Drag & drop your .md file here</p>
-                        <p class="or-text">or</p>
-                        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
-                            Browse Files
-                        </button>
-                        <input type="file" id="fileInput" accept=".md,.markdown" style="display: none;">
+                        <p class="upload-text">Drop file here or click to browse</p>
+                        <p class="upload-hint">.md or .markdown files only</p>
                     </div>
                     <div class="file-info" id="fileInfo" style="display: none;">
-                        <span class="file-name" id="fileName"></span>
-                        <button class="btn-icon" onclick="clearFile()" title="Remove file">✕</button>
+                        <div class="file-details">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                                <polyline points="13 2 13 9 20 9"/>
+                            </svg>
+                            <span class="file-name" id="fileName"></span>
+                        </div>
+                        <button class="btn-remove" onclick="clearFile()" title="Remove">×</button>
                     </div>
-                </section>
+                </div>
+            </section>
 
+            <!-- Settings Grid -->
+            <div class="settings-grid">
+                <!-- Templates Section -->
                 <section class="settings-section">
-                    <h2>Document Settings</h2>
-                    
-                    <div class="setting-group">
-                        <label for="documentType">Document Type</label>
-                        <select id="documentType" onchange="updateTemplate()">
-                            <option value="iso-compliant">ISO/IEC/IEEE 29148 Standard</option>
-                            <option value="project">Project Documentation</option>
-                            <option value="homework">Academic/Homework</option>
-                            <option value="academic-classic">Academic Classic (Cambridge)</option>
-                            <option value="letter">Letter Format</option>
-                            <option value="technical">Technical Report</option>
-                            <option value="minimal">Minimal/Clean</option>
-                        </select>
+                    <button class="section-toggle" onclick="toggleSection('templates')">
+                        <span>Templates</span>
+                    <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+                <div class="section-content" id="templates">
+                    <div class="template-grid" id="templateSelector">
+                        <div class="template-item" data-template="academic-classic">
+                            <div class="template-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                </svg>
+                            </div>
+                            <span>Academic</span>
+                        </div>
+                        <div class="template-item" data-template="iso-compliant">
+                            <div class="template-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/>
+                                    <line x1="9" y1="12" x2="15" y2="12"/>
+                                    <line x1="9" y1="16" x2="15" y2="16"/>
+                                </svg>
+                            </div>
+                            <span>ISO</span>
+                        </div>
+                        <div class="template-item" data-template="project">
+                            <div class="template-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                                </svg>
+                            </div>
+                            <span>Project</span>
+                        </div>
+                        <div class="template-item" data-template="homework">
+                            <div class="template-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </div>
+                            <span>Homework</span>
+                        </div>
+                        <div class="template-item" data-template="letter">
+                            <div class="template-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                    <polyline points="22,6 12,13 2,6"/>
+                                </svg>
+                            </div>
+                            <span>Letter</span>
+                        </div>
+                        <div class="template-item" data-template="technical">
+                            <div class="template-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <circle cx="12" cy="12" r="3"/>
+                                    <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
+                                </svg>
+                            </div>
+                            <span>Technical</span>
+                        </div>
+                        <div class="template-item" data-template="minimal">
+                            <div class="template-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                    <line x1="9" y1="9" x2="15" y2="9"/>
+                                    <line x1="9" y1="15" x2="15" y2="15"/>
+                                </svg>
+                            </div>
+                            <span>Minimal</span>
+                        </div>
                     </div>
+                    <input type="hidden" id="documentType" value="academic-classic">
+                </div>
+            </section>
 
-                    <div class="setting-group">
-                        <label for="imageSize">Image Size (%)</label>
-                        <input type="range" id="imageSize" min="20" max="100" value="80" step="5">
-                        <span id="imageSizeValue">80%</span>
+            <section class="settings-section">
+                <button class="section-toggle" onclick="toggleSection('options')">
+                    <span>Options</span>
+                    <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+                <div class="section-content collapsed" id="options">
+                    <div class="option-row">
+                        <label class="switch">
+                            <input type="checkbox" id="showToc" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span>Table of Contents</span>
+                    </div>
+                    
+                    <div class="option-row">
+                        <label>Image Size</label>
+                        <div class="range-group">
+                            <input type="range" id="imageSize" min="30" max="100" value="80">
+                            <span id="imageSizeValue">80%</span>
+                        </div>
                     </div>
 
                     <div class="setting-group">
@@ -77,18 +185,42 @@
                         </label>
                     </div>
 
-                    <div class="setting-group" id="isoSettings" style="display: none;">
-                        <h3>ISO Compliance Settings</h3>
-                        <label for="isoDocType">ISO Document Type</label>
-                        <select id="isoDocType">
-                            <option value="StRS">StRS - Stakeholder Requirements</option>
-                            <option value="SyRS">SyRS - System Requirements</option>
-                            <option value="SRS">SRS - Software Requirements</option>
-                            <option value="BRS">BRS - Business Requirements</option>
-                            <option value="OpsCon">OpsCon - Operational Concept</option>
-                        </select>
+                    <div class="iso-settings" id="isoSettings" style="display: none;">
+                        <div class="iso-header">
+                            <h4>ISO Compliance</h4>
+                            <p>Configure document type for ISO standards</p>
+                        </div>
+                        <div class="iso-select-group">
+                            <label for="isoDocType">Document Type</label>
+                            <select id="isoDocType">
+                                <option value="StRS">StRS - Stakeholder Requirements</option>
+                                <option value="SyRS">SyRS - System Requirements</option>
+                                <option value="SRS">SRS - Software Requirements</option>
+                                <option value="BRS">BRS - Business Requirements</option>
+                                <option value="OpsCon">OpsCon - Operational Concept</option>
+                            </select>
+                        </div>
                     </div>
+                </div>
                 </section>
+            </div>
+
+            <!-- Metadata Section (Full Width) -->
+            <section class="settings-section">
+                <button class="section-toggle" onclick="toggleSection('metadata')">
+                    <span>Document Metadata</span>
+                    <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+                <div class="section-content collapsed" id="metadata">
+                    <div class="metadata-inline">
+                        <p class="metadata-description">Add or edit YAML frontmatter metadata for your document</p>
+                        <div class="metadata-form" id="metadataForm"></div>
+                        <button class="btn-apply" onclick="applyMetadata()">Apply Metadata</button>
+                    </div>
+                </div>
+            </section>
 
                 <section class="actions-section">
                     <h2>Export</h2>
@@ -107,8 +239,105 @@
                 </section>
             </aside>
 
+            <!-- Guide Panel -->
+            <aside class="guide-panel" id="guidePanel">
+                <div class="guide-header">
+                    <h3>Markdown Guide</h3>
+                    <button class="btn-close" onclick="toggleGuide()" title="Close">&times;</button>
+                </div>
+                <div class="guide-content">
+                    <section class="guide-section">
+                        <h4>Extended Markdown Syntax</h4>
+                        <div class="guide-item">
+                            <h5>Mermaid Diagrams</h5>
+                            <pre><code>```mermaid
+graph TD;
+    A-->B;
+    B-->C;
+```</code></pre>
+                        </div>
+                        <div class="guide-item">
+                            <h5>Code Blocks with Syntax Highlighting</h5>
+                            <pre><code>```python
+def hello():
+    print("Hello World")
+```</code></pre>
+                            <p>Supported: python, javascript, css, yaml, json, sql</p>
+                        </div>
+                        <div class="guide-item">
+                            <h5>Tables</h5>
+                            <pre><code>| Header 1 | Header 2 |
+|----------|----------|
+| Cell 1   | Cell 2   |</code></pre>
+                        </div>
+                        <div class="guide-item">
+                            <h5>Images</h5>
+                            <pre><code>![Alt text](./path/to/image.png)</code></pre>
+                            <p>Upload referenced images when prompted</p>
+                        </div>
+                    </section>
+                    <section class="guide-section">
+                        <h4>YAML Frontmatter Structure</h4>
+                        <div class="guide-item">
+                            <h5>Basic Structure</h5>
+                            <pre><code>---
+title: Document Title
+author: Author Name
+date: 2025-12-09
+version: 1.0.0
+---</code></pre>
+                        </div>
+                        <div class="guide-item">
+                            <h5>Academic Template</h5>
+                            <pre><code>---
+title: Research Paper Title
+author: John Doe
+institution: University Name
+created: 2025-12-09
+version: 1.0.0
+image_size: 80%
+---</code></pre>
+                        </div>
+                        <div class="guide-item">
+                            <h5>Technical Template</h5>
+                            <pre><code>---
+title: Technical Report
+author: Jane Smith
+organization: Company Name
+created: 2025-12-09
+version: 1.0.0
+---</code></pre>
+                        </div>
+                        <div class="guide-item">
+                            <h5>Letter Template</h5>
+                            <pre><code>---
+title: Formal Letter
+sender_name: Your Name
+sender_address: 123 Main St
+recipient_name: Recipient Name
+recipient_address: 456 Oak Ave
+date: December 9, 2025
+---</code></pre>
+                        </div>
+                    </section>
+                </div>
+            </aside>
+
             <!-- Right Panel - Preview -->
             <main class="preview-panel">
+                <!-- File References Card -->
+                <div class="file-refs-panel" id="fileRefsPanel" style="display: none;">
+                    <div class="refs-header">
+                        <h3>Missing File References</h3>
+                        <button class="btn-close" onclick="closeFileRefs()" title="Close">&times;</button>
+                    </div>
+                    <div class="refs-content">
+                        <p class="refs-hint">The following files are referenced but not embedded:</p>
+                        <div class="refs-list" id="refsList"></div>
+                        <input type="file" id="refFileInput" multiple hidden accept="image/*">
+                        <button class="btn-upload-refs" onclick="document.getElementById('refFileInput').click()">Upload Files</button>
+                    </div>
+                </div>
                 <div class="preview-header">
                     <h2>Live Preview</h2>
                     <div class="preview-controls">
@@ -137,7 +366,14 @@
 
         <!-- Footer -->
         <footer class="app-footer">
-            <p>Markdown Document Converter v1.0.0 | Supports YAML frontmatter, ISO 29148, and multiple templates</p>
+            <p>EXTENDED MARKDOWN PARSER © 2025 @plu101</p>
+            <div class="footer-links">
+                <a href="https://github.com/plu101" target="_blank" rel="noopener noreferrer" title="GitHub">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                </a>
+            </div>
         </footer>
     </div>
 

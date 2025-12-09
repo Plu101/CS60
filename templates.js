@@ -9,6 +9,7 @@ const templates = {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base target="_parent">
     <meta name="author" content="${metadata.author || 'Unknown Author'}">
     <meta name="description" content="${metadata.description || ''}">
     <meta name="keywords" content="${metadata.keywords || ''}">
@@ -42,9 +43,9 @@ const templates = {
         }
         
         .document-header {
-            background: var(--sidebar-bg);
-            border-bottom: 2px solid var(--primary-color);
-            padding: 2rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #d0d5dd;
+            padding: 1.5rem 2rem;
             margin-bottom: 2rem;
         }
         
@@ -89,11 +90,51 @@ const templates = {
             font-size: 1.2rem;
             margin-bottom: 1rem;
             color: var(--primary-color);
+            cursor: pointer;
+            user-select: none;
+        }
+        .table-of-contents h2::before {
+            content: '▼ ';
+            font-size: 0.8em;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+        .table-of-contents.collapsed h2::before {
+            content: '▶ ';
+        }
+        .table-of-contents.collapsed > ul {
+            display: none;
         }
         
         .table-of-contents ul {
             list-style: none;
             padding-left: 0;
+        }
+        
+        .table-of-contents li.has-children {
+            margin: 0.5rem 0;
+        }
+        
+        .table-of-contents .toc-toggle {
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            width: 1em;
+            transition: transform 0.2s;
+            font-size: 0.8em;
+        }
+        
+        .table-of-contents .toc-children {
+            padding-left: 1.2rem;
+            margin-top: 0.3rem;
+        }
+        
+        .table-of-contents .toc-children.collapsed {
+            display: none;
+        }
+        
+        .table-of-contents .toc-children ul {
+            padding-left: 0.5rem;
         }
         
         .table-of-contents li {
@@ -275,7 +316,19 @@ const templates = {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
-    <script>Prism.highlightAll();</script>
+    <script>
+        Prism.highlightAll();
+        // Make TOC collapsible
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocHeaders = document.querySelectorAll('.table-of-contents h2, .contents h2');
+            tocHeaders.forEach(function(header) {
+                header.addEventListener('click', function() {
+                    const toc = this.closest('.table-of-contents, .contents');
+                    if (toc) toc.classList.toggle('collapsed');
+                });
+            });
+        });
+    </script>
 </body>
 </html>`;
         }
@@ -290,6 +343,7 @@ const templates = {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base target="_parent">
     <title>${metadata.title || 'Project Documentation'}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <style>
@@ -319,8 +373,10 @@ const templates = {
         }
         
         .project-header h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             margin-bottom: 0.5rem;
+            font-weight: 600;
+            letter-spacing: 0.01em;
         }
         
         .project-meta {
@@ -354,6 +410,20 @@ const templates = {
             font-size: 1.1rem;
             margin-bottom: 1rem;
             color: var(--primary);
+            cursor: pointer;
+            user-select: none;
+        }
+        .table-of-contents h2::before {
+            content: '▼ ';
+            font-size: 0.8em;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+        .table-of-contents.collapsed h2::before {
+            content: '▶ ';
+        }
+        .table-of-contents.collapsed > ul {
+            display: none;
         }
         
         .table-of-contents ul {
@@ -363,6 +433,32 @@ const templates = {
         
         .table-of-contents li {
             margin: 0.5rem 0;
+        }
+        
+        .table-of-contents li.has-children {
+            margin: 0.5rem 0;
+        }
+        
+        .table-of-contents .toc-toggle {
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            width: 1em;
+            transition: transform 0.2s;
+            font-size: 0.8em;
+        }
+        
+        .table-of-contents .toc-children {
+            padding-left: 1.2rem;
+            margin-top: 0.3rem;
+        }
+        
+        .table-of-contents .toc-children.collapsed {
+            display: none;
+        }
+        
+        .table-of-contents .toc-children ul {
+            padding-left: 0.5rem;
         }
         
         .table-of-contents a {
@@ -461,7 +557,32 @@ const templates = {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-    <script>Prism.highlightAll();</script>
+    <script>
+        Prism.highlightAll();
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocHeaders = document.querySelectorAll('.table-of-contents h2');
+            tocHeaders.forEach(function(header) {
+                header.addEventListener('click', function() {
+                    const toc = this.closest('.table-of-contents');
+                    if (toc) toc.classList.toggle('collapsed');
+                });
+            });
+            
+            const tocToggles = document.querySelectorAll('.toc-toggle');
+            tocToggles.forEach(function(toggle) {
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const targetId = this.getAttribute('data-target');
+                    const targetDiv = document.getElementById(targetId);
+                    if (targetDiv) {
+                        targetDiv.classList.toggle('collapsed');
+                        this.textContent = targetDiv.classList.contains('collapsed') ? '▶' : '▼';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>`;
         }
@@ -476,6 +597,7 @@ const templates = {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base target="_parent">
     <title>${metadata.title || 'Academic Assignment'}</title>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
@@ -540,16 +662,6 @@ const templates = {
             margin: 1rem 0;
             text-indent: 2rem;
             hanging-punctuation: first;
-        }
-        /* Drop cap for first paragraph in sections */
-        main p:first-of-type::first-letter {
-            float: left;
-            font-size: 3.2rem;
-            line-height: 0.9;
-            padding-right: 0.1rem;
-            padding-top: 0.2rem;
-            color: #8c6d3a;
-            font-family: 'Crimson Text', 'EB Garamond', serif;
         }
         
         img {
@@ -669,6 +781,7 @@ const templates = {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base target="_parent">
     <title>${metadata.title || 'Academic Paper'}</title>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
@@ -692,31 +805,43 @@ const templates = {
             border-bottom: 2px solid #e5dbc8;
         }
         header.title h1 {
-            font-size: 2.4rem;
-            letter-spacing: .02em;
+            font-size: 2.2rem;
+            letter-spacing: .01em;
             color: #1e262d;
-            font-variant: small-caps;
-            margin-bottom: .5rem;
+            font-weight: 600;
+            margin-bottom: .75rem;
+            line-height: 1.2;
         }
         header.title .meta {
             color: #6b6257;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
         }
         .contents { margin: 1rem 0 2rem; }
         .contents .table-of-contents {
             background: #fffdf9; border: 1px solid #e5dbc8; border-radius: 6px; padding: 1.25rem;
         }
-        .contents h2 { font-size: 1.15rem; color: #8c6d3a; letter-spacing: .06em; font-variant: small-caps; margin-bottom: .5rem; }
-        .contents ul { list-style: none; padding-left: 0; }
-        .contents li { margin: .4rem 0; }
-        .contents a { color: #5a5247; text-decoration: none; }
-        .contents a:hover { text-decoration: underline; color: #8c6d3a; }
+        .contents .table-of-contents h2 { font-size: 1.15rem; color: #8c6d3a; letter-spacing: .06em; font-variant: small-caps; margin-bottom: .5rem; cursor: pointer; user-select: none; }
+        .contents .table-of-contents h2::before { content: '▼ '; font-size: 0.8em; transition: transform 0.2s; display: inline-block; }
+        .contents .table-of-contents.collapsed h2::before { content: '▶ '; }
+        .contents .table-of-contents.collapsed > ul { display: none; }
+        .contents .table-of-contents ul { list-style: none; padding-left: 0; }
+        .contents .table-of-contents li { margin: .4rem 0; }
+        .contents .table-of-contents li.has-children { margin: 0.5rem 0; }
+        .contents .table-of-contents .toc-toggle { cursor: pointer; user-select: none; display: inline-block; width: 1em; transition: transform 0.2s; font-size: 0.8em; }
+        .contents .table-of-contents .toc-children { padding-left: 1.2rem; margin-top: 0.3rem; }
+        .contents .table-of-contents .toc-children.collapsed { display: none; }
+        .contents .table-of-contents .toc-children ul { padding-left: 0.5rem; }
+        .contents .table-of-contents a { color: #5a5247; text-decoration: none; }
+        .contents .table-of-contents a:hover { text-decoration: underline; color: #8c6d3a; }
         main.content { margin-top: 1rem; }
-        h1, h2, h3, h4 { color: #1e262d; margin: 2rem 0 1rem; }
-        h2 { font-size: 1.6rem; border-bottom: 1px solid #e5dbc8; padding-bottom: .4rem; }
-        h3 { font-size: 1.3rem; }
-        p { text-align: justify; margin: 1rem 0; text-indent: 2rem; hanging-punctuation: first; }
-        main p:first-of-type::first-letter { float: left; font-size: 3.2rem; line-height: .9; padding-right: .15rem; padding-top: .28rem; color: #8c6d3a; font-family: 'Crimson Text', serif; }
+        h1, h2, h3, h4 { color: #1e262d; margin: 2rem 0 1rem; font-weight: 600; }
+        h2 { font-size: 1.5rem; border-bottom: 1px solid #e5dbc8; padding-bottom: .5rem; margin-top: 2.5rem; }
+        h3 { font-size: 1.25rem; margin-top: 2rem; }
+        h4 { font-size: 1.1rem; }
+        p { text-align: justify; margin: 1rem 0; line-height: 1.9; }
+        p:first-of-type { margin-top: 0; }
+        p + p { text-indent: 2rem; }
         blockquote { border-left: 4px solid #8c6d3a; padding-left: 1rem; margin: 1.5rem 0; font-style: italic; color: #5a5247; }
         img { max-width: ${metadata.image_size || '80%'}; height: auto; display: block; margin: 1.5rem auto; border: 1px solid #e5dbc8; border-radius: 4px; }
         pre { background: #f6f2e9; border: 1px solid #e5dbc8; padding: 1rem; border-radius: 4px; overflow-x: auto; margin: 1rem 0; }
@@ -741,7 +866,32 @@ const templates = {
     <footer class="foot">Prepared by ${metadata.author || 'Author'}</footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script>Prism.highlightAll();</script>
+    <script>
+        Prism.highlightAll();
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocHeaders = document.querySelectorAll('.contents .table-of-contents h2');
+            tocHeaders.forEach(function(header) {
+                header.addEventListener('click', function() {
+                    const toc = this.closest('.table-of-contents');
+                    if (toc) toc.classList.toggle('collapsed');
+                });
+            });
+            
+            const tocToggles = document.querySelectorAll('.toc-toggle');
+            tocToggles.forEach(function(toggle) {
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const targetId = this.getAttribute('data-target');
+                    const targetDiv = document.getElementById(targetId);
+                    if (targetDiv) {
+                        targetDiv.classList.toggle('collapsed');
+                        this.textContent = targetDiv.classList.contains('collapsed') ? '▶' : '▼';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>`;
         }
@@ -756,6 +906,7 @@ const templates = {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base target="_parent">
     <title>${metadata.title || 'Letter'}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -883,110 +1034,158 @@ const templates = {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base target="_parent">
     <title>${metadata.title || 'Technical Report'}</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            line-height: 1.7;
-            color: #1a1a1a;
+            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.75;
+            color: #1e293b;
             background: #ffffff;
-        }
-        
-        .cover-page {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-align: center;
-            padding: 2rem;
-        }
-        
-        .cover-page h1 {
-            font-size: 3rem;
-            margin-bottom: 2rem;
-        }
-        
-        .cover-metadata {
-            font-size: 1.2rem;
-            margin: 0.5rem 0;
-        }
-        
-        .main-container {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            max-width: 1400px;
+            max-width: 820px;
             margin: 0 auto;
+            padding: 3rem 2.5rem;
+            text-rendering: optimizeLegibility;
         }
         
-        .sidebar {
-            background: #f5f5f5;
-            padding: 2rem 1rem;
-            border-right: 1px solid #ddd;
-            position: sticky;
-            top: 0;
-            height: fit-content;
-            max-height: 100vh;
-            overflow-y: auto;
+        header.title {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
         }
         
-        .table-of-contents h2 {
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            color: #667eea;
+        header.title h1 {
+            font-size: 2rem;
+            color: #0f172a;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            line-height: 1.2;
         }
         
-        .table-of-contents ul {
+        header.title .meta {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .contents { margin: 1rem 0 2rem; }
+        .contents .table-of-contents {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.25rem;
+        }
+        .contents .table-of-contents h2 {
+            font-size: 1rem;
+            color: #334155;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            margin-bottom: .5rem;
+            cursor: pointer;
+            user-select: none;
+            font-weight: 600;
+        }
+        .contents .table-of-contents h2::before {
+            content: '▼ ';
+            font-size: 0.8em;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+        .contents .table-of-contents.collapsed h2::before {
+            content: '▶ ';
+        }
+        .contents .table-of-contents.collapsed > ul {
+            display: none;
+        }
+        .contents .table-of-contents ul {
             list-style: none;
-            padding: 0;
+            padding-left: 0;
         }
-        
-        .table-of-contents li {
+        .contents .table-of-contents li {
+            margin: .4rem 0;
+        }
+        .contents .table-of-contents li.has-children {
             margin: 0.5rem 0;
         }
-        
-        .table-of-contents a {
-            color: #333;
+        .contents .table-of-contents .toc-toggle {
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            width: 1em;
+            transition: transform 0.2s;
+            font-size: 0.8em;
+        }
+        .contents .table-of-contents .toc-children {
+            padding-left: 1.2rem;
+            margin-top: 0.3rem;
+        }
+        .contents .table-of-contents .toc-children.collapsed {
+            display: none;
+        }
+        .contents .table-of-contents .toc-children ul {
+            padding-left: 0.5rem;
+        }
+        .contents .table-of-contents a {
+            color: #475569;
             text-decoration: none;
             font-size: 0.9rem;
         }
-        
-        .table-of-contents a:hover {
-            color: #667eea;
+        .contents .table-of-contents a:hover {
+            text-decoration: underline;
+            color: #3b82f6;
         }
         
-        .content {
-            padding: 3rem;
-            max-width: 900px;
-        }
+        main.content { margin-top: 1rem; }
         
-        h1, h2, h3 {
-            color: #1a1a1a;
-            margin: 2rem 0 1rem;
-        }
-        
-        h1 {
-            font-size: 2.5rem;
-            border-bottom: 3px solid #667eea;
-            padding-bottom: 0.5rem;
+        h1, h2, h3, h4 {
+            color: #0f172a;
+            margin: 2.5rem 0 1rem;
+            font-weight: 600;
         }
         
         h2 {
-            font-size: 2rem;
-            color: #667eea;
+            font-size: 1.625rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+            margin-top: 2.5rem;
         }
         
         h3 {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
+            margin-top: 2rem;
+        }
+        
+        h4 {
+            font-size: 1.05rem;
         }
         
         p {
             margin: 1rem 0;
+            line-height: 1.85;
+            color: #334155;
+        }
+        
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 1.75rem;
+            color: #334155;
+        }
+        
+        li {
+            margin: 0.4rem 0;
+        }
+        
+        blockquote {
+            border-left: 3px solid #3b82f6;
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: #475569;
         }
         
         img {
@@ -994,76 +1193,118 @@ const templates = {
             height: auto;
             display: block;
             margin: 2rem auto;
-            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
         }
         
         pre {
-            background: #282c34;
-            padding: 1.5rem;
+            background: #f8fafc;
+            padding: 1.25rem;
             border-radius: 6px;
             overflow-x: auto;
             margin: 1.5rem 0;
+            border: 1px solid #e2e8f0;
         }
         
         code {
-            font-family: 'Fira Code', 'Consolas', monospace;
+            font-family: 'IBM Plex Mono', 'Courier New', monospace;
             font-size: 0.9em;
+        }
+        
+        pre code {
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+        }
+        
+        :not(pre) > code {
+            background: #f1f5f9;
+            padding: .2rem .4rem;
+            border-radius: 3px;
+            color: #dc2626;
+            font-size: 0.875em;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 1.5rem 0;
+            font-size: 0.95rem;
         }
         
         th, td {
             padding: 0.75rem;
-            border: 1px solid #ddd;
+            text-align: left;
+            border: 1px solid #e2e8f0;
         }
         
         th {
-            background: #f5f5f5;
+            background: #f8fafc;
             font-weight: 600;
+            color: #0f172a;
         }
         
-        blockquote {
-            border-left: 4px solid #667eea;
-            padding-left: 1rem;
-            margin: 1.5rem 0;
-            font-style: italic;
-            color: #555;
+        tr:nth-child(even) {
+            background: #f8fafc;
         }
         
-        ul, ol { margin: 1rem 0; padding-left: 2rem; }
-        li { margin: 0.5rem 0; }
+        footer.foot {
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            color: #64748b;
+            font-size: .9rem;
+        }
         
         @media print {
-            .cover-page { page-break-after: always; }
-            .sidebar { display: none; }
-            .main-container { grid-template-columns: 1fr; }
+            body { max-width: 100%; padding: 1in; }
+            .contents { page-break-after: always; }
         }
     </style>
 </head>
 <body>
-    <div class="cover-page">
+    <header class="title">
         <h1>${metadata.title || 'Technical Report'}</h1>
-        <div class="cover-metadata">
+        <div class="meta">
             <div>${metadata.author || 'Author Name'}</div>
             ${metadata.organization ? `<div>${metadata.organization}</div>` : ''}
-            <div>${metadata.created || new Date().toISOString().split('T')[0]}</div>
-            <div>Version ${metadata.version || '1.0.0'}</div>
+            <div>${metadata.created || new Date().toISOString().split('T')[0]} • v${metadata.version || '1.0.0'}</div>
         </div>
-    </div>
-    
-    <div class="main-container">
-        <aside class="sidebar">${toc}</aside>
-        <main class="content">${content}</main>
-    </div>
+    </header>
+    ${toc ? `<section class="contents">${toc}</section>` : ''}
+    <main class="content">${content}</main>
+    <footer class="foot">Technical documentation by ${metadata.author || 'Author'}</footer>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-    <script>Prism.highlightAll();</script>
+    <script>
+        Prism.highlightAll();
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocHeaders = document.querySelectorAll('.table-of-contents h2');
+            tocHeaders.forEach(function(header) {
+                header.addEventListener('click', function() {
+                    const toc = this.closest('.table-of-contents');
+                    if (toc) toc.classList.toggle('collapsed');
+                });
+            });
+            
+            const tocToggles = document.querySelectorAll('.toc-toggle');
+            tocToggles.forEach(function(toggle) {
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const targetId = this.getAttribute('data-target');
+                    const targetDiv = document.getElementById(targetId);
+                    if (targetDiv) {
+                        targetDiv.classList.toggle('collapsed');
+                        this.textContent = targetDiv.classList.contains('collapsed') ? '▶' : '▼';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>`;
         }
@@ -1078,6 +1319,7 @@ const templates = {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base target="_parent">
     <title>${metadata.title || 'Document'}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
     <style>
