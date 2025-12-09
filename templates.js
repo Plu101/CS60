@@ -17,8 +17,10 @@ const templates = {
     <meta name="last-modified" content="${metadata.modified || new Date().toISOString().split('T')[0]}">
     <meta name="version" content="${metadata.version || '1.0.0'}">
     <title>${metadata.title || 'Untitled Document'}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <style>
+        .math-block { margin: 1.5rem 0; overflow-x: auto; }
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #1976d2;
@@ -345,8 +347,10 @@ const templates = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base target="_parent">
     <title>${metadata.title || 'Project Documentation'}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <style>
+        .math-block { margin: 1.5rem 0; overflow-x: auto; }
         :root {
             --primary: #0ea5e9;
             --primary-dark: #0284c7;
@@ -600,8 +604,10 @@ const templates = {
     <base target="_parent">
     <title>${metadata.title || 'Academic Assignment'}</title>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
     <style>
+        .math-block { margin: 1.5rem 0; overflow-x: auto; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
@@ -784,8 +790,10 @@ const templates = {
     <base target="_parent">
     <title>${metadata.title || 'Academic Paper'}</title>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
     <style>
+        .math-block { margin: 1.5rem 0; overflow-x: auto; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'EB Garamond', Georgia, 'Times New Roman', serif;
@@ -908,7 +916,9 @@ const templates = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base target="_parent">
     <title>${metadata.title || 'Letter'}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <style>
+        .math-block { margin: 1.5rem 0; overflow-x: auto; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
@@ -1037,8 +1047,10 @@ const templates = {
     <base target="_parent">
     <title>${metadata.title || 'Technical Report'}</title>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
     <style>
+        .math-block { margin: 1.5rem 0; overflow-x: auto; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
@@ -1321,8 +1333,10 @@ const templates = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base target="_parent">
     <title>${metadata.title || 'Document'}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
     <style>
+        .math-block { margin: 1.5rem 0; overflow-x: auto; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {

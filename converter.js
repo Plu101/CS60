@@ -40,6 +40,100 @@ class MarkdownConverter {
             }
         });
         
+        // Add math inline rule
+        this.md.inline.ruler.before('escape', 'math_inline', function(state, silent) {
+            if (state.src[state.pos] !== '$') return false;
+            
+            const start = state.pos + 1;
+            let pos = start;
+            
+            // Find closing $
+            while (pos < state.src.length && state.src[pos] !== '$') {
+                if (state.src[pos] === '\\') pos++; // Skip escaped characters
+                pos++;
+            }
+            
+            if (pos >= state.src.length) return false;
+            if (pos === start) return false; // Empty math
+            
+            const content = state.src.slice(start, pos);
+            
+            if (!silent) {
+                const token = state.push('math_inline', 'math', 0);
+                token.content = content;
+                token.markup = '$';
+            }
+            
+            state.pos = pos + 1;
+            return true;
+        });
+        
+        // Add math block rule
+        this.md.block.ruler.before('fence', 'math_block', function(state, startLine, endLine, silent) {
+            let pos = state.bMarks[startLine] + state.tShift[startLine];
+            let max = state.eMarks[startLine];
+            
+            if (pos + 2 > max) return false;
+            if (state.src.slice(pos, pos + 2) !== '$$') return false;
+            
+            pos += 2;
+            let firstLine = state.src.slice(pos, max);
+            
+            if (firstLine.trim().endsWith('$$')) {
+                firstLine = firstLine.trim().slice(0, -2);
+            }
+            
+            let nextLine = startLine;
+            let lastLine = '';
+            
+            // Find closing $$
+            for (nextLine = startLine + 1; nextLine < endLine; nextLine++) {
+                pos = state.bMarks[nextLine] + state.tShift[nextLine];
+                max = state.eMarks[nextLine];
+                
+                if (state.src.slice(pos, max).trim() === '$$') {
+                    lastLine = state.src.slice(state.bMarks[startLine + 1], state.eMarks[nextLine - 1]);
+                    break;
+                }
+            }
+            
+            const content = firstLine + '\n' + lastLine;
+            
+            if (!silent) {
+                const token = state.push('math_block', 'math', 0);
+                token.content = content.trim();
+                token.block = true;
+                token.markup = '$$';
+            }
+            
+            state.line = nextLine + 1;
+            return true;
+        });
+        
+        // Render inline math
+        this.md.renderer.rules.math_inline = function(tokens, idx) {
+            try {
+                return window.katex.renderToString(tokens[idx].content, {
+                    throwOnError: false,
+                    displayMode: false
+                });
+            } catch (e) {
+                return '<span style="color: red;">Math Error: ' + escapeHtml(e.message) + '</span>';
+            }
+        };
+        
+        // Render block math
+        this.md.renderer.rules.math_block = function(tokens, idx) {
+            try {
+                return '<div class="math-block">' + window.katex.renderToString(tokens[idx].content, {
+                    throwOnError: false,
+                    displayMode: true
+                }) + '</div>';
+            } catch (e) {
+                return '<div style="color: red;">Math Error: ' + escapeHtml(e.message) + '</div>';
+            }
+        };
+        
         markdownItAnchor.install(this.md);
         markdownItToc.install(this.md);
     }
