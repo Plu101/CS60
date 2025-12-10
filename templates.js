@@ -666,7 +666,6 @@ const templates = {
         p {
             text-align: justify;
             margin: 1rem 0;
-            text-indent: 2rem;
             hanging-punctuation: first;
         }
         
@@ -829,10 +828,7 @@ const templates = {
         .contents .table-of-contents {
             background: #fffdf9; border: 1px solid #e5dbc8; border-radius: 6px; padding: 1.25rem;
         }
-        .contents .table-of-contents h2 { font-size: 1.15rem; color: #8c6d3a; letter-spacing: .06em; font-variant: small-caps; margin-bottom: .5rem; cursor: pointer; user-select: none; }
-        .contents .table-of-contents h2::before { content: '▼ '; font-size: 0.8em; transition: transform 0.2s; display: inline-block; }
-        .contents .table-of-contents.collapsed h2::before { content: '▶ '; }
-        .contents .table-of-contents.collapsed > ul { display: none; }
+        .contents .table-of-contents h2 { font-size: 1.15rem; color: #8c6d3a; letter-spacing: .06em; font-variant: small-caps; margin-bottom: .5rem; }
         .contents .table-of-contents ul { list-style: none; padding-left: 0; }
         .contents .table-of-contents li { margin: .4rem 0; }
         .contents .table-of-contents li.has-children { margin: 0.5rem 0; }
@@ -849,7 +845,8 @@ const templates = {
         h4 { font-size: 1.1rem; }
         p { text-align: justify; margin: 1rem 0; line-height: 1.9; }
         p:first-of-type { margin-top: 0; }
-        p + p { text-indent: 2rem; }
+        ul, ol { margin: 1rem 0; padding-left: 2rem; }
+        li { margin: 0.5rem 0; }
         blockquote { border-left: 4px solid #8c6d3a; padding-left: 1rem; margin: 1.5rem 0; font-style: italic; color: #5a5247; }
         img { max-width: ${metadata.image_size || '80%'}; height: auto; display: block; margin: 1.5rem auto; border: 1px solid #e5dbc8; border-radius: 4px; }
         pre { background: #f6f2e9; border: 1px solid #e5dbc8; padding: 1rem; border-radius: 4px; overflow-x: auto; margin: 1rem 0; }
