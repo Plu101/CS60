@@ -21,14 +21,69 @@ const templates = {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <style>
         .math-block { margin: 1.5rem 0; overflow-x: auto; }
+        
+        /* Academic Color Scheme */
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #1976d2;
-            --bg-color: #ffffff;
-            --text-color: #333333;
-            --border-color: #e0e0e0;
-            --sidebar-bg: #f8f9fa;
-            --code-bg: #f5f5f5;
+            --primary-color: #1e3a5f;
+            --secondary-color: #4a5f7a;
+            --accent-color: #8b2635;
+            --bg-color: #fdfdfb;
+            --text-color: #1a1a2e;
+            --border-color: #d4d1c7;
+            --sidebar-bg: #f7f6f2;
+            --code-bg: #f9f8f5;
+            --header-bg: #ebe9e3;
+        }
+        
+        /* Progress Bar */
+        .read-progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            z-index: 10000;
+            transition: width 0.1s ease-out;
+        }
+        
+        /* Print Button */
+        .print-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(30, 58, 95, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .print-button:hover {
+            background: var(--accent-color);
+            transform: scale(1.1);
+        }
+        
+        .print-button svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        @media print {
+            .print-button {
+                display: none;
+            }
+            .read-progress-bar {
+                display: none;
+            }
         }
         
         * {
@@ -44,29 +99,77 @@ const templates = {
             background-color: var(--bg-color);
         }
         
+        /* Document Header - Foldable Metadata */
         .document-header {
-            background: #f8f9fa;
-            border-bottom: 1px solid #d0d5dd;
-            padding: 1.5rem 2rem;
+            background: var(--header-bg);
+            border-bottom: 2px solid var(--border-color);
             margin-bottom: 2rem;
+        }
+        
+        .document-header-toggle {
+            width: 100%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1.25rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.15rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .document-header-toggle:hover {
+            background: var(--secondary-color);
+        }
+        
+        .document-header-toggle .chevron {
+            transition: transform 0.3s ease;
+        }
+        
+        .document-header.collapsed .chevron {
+            transform: rotate(-90deg);
+        }
+        
+        .document-header-content {
+            padding: 1.5rem 2rem;
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        
+        .document-header.collapsed .document-header-content {
+            max-height: 0;
+            padding: 0 2rem;
         }
         
         .document-header table {
             width: 100%;
             border-collapse: collapse;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         
         .document-header th {
             text-align: left;
-            padding: 0.5rem;
+            padding: 0.75rem 1rem;
             background: var(--primary-color);
             color: white;
             font-weight: 600;
+            font-size: 1.1rem;
         }
         
         .document-header td {
-            padding: 0.5rem;
+            padding: 0.75rem 1rem;
             border: 1px solid var(--border-color);
+        }
+        
+        .document-header td:first-child {
+            font-weight: 600;
+            width: 180px;
+            background: var(--sidebar-bg);
         }
         
         .main-container {
@@ -92,20 +195,9 @@ const templates = {
             font-size: 1.2rem;
             margin-bottom: 1rem;
             color: var(--primary-color);
-            cursor: pointer;
-            user-select: none;
-        }
-        .table-of-contents h2::before {
-            content: '▼ ';
-            font-size: 0.8em;
-            transition: transform 0.2s;
-            display: inline-block;
-        }
-        .table-of-contents.collapsed h2::before {
-            content: '▶ ';
-        }
-        .table-of-contents.collapsed > ul {
-            display: none;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
         }
         
         .table-of-contents ul {
@@ -285,34 +377,54 @@ const templates = {
     </style>
 </head>
 <body>
-    <div class="document-header">
-        <table>
-            <tr>
-                <th colspan="2">${metadata.title || 'Untitled Document'}</th>
-            </tr>
-            <tr>
-                <td><strong>Document Type:</strong></td>
-                <td>${metadata.document_type || metadata.iso_doc_type || 'StRS'}</td>
-            </tr>
-            <tr>
-                <td><strong>Author:</strong></td>
-                <td>${metadata.author || 'Unknown Author'}</td>
-            </tr>
-            <tr>
-                <td><strong>Version:</strong></td>
-                <td>${metadata.version || '1.0.0'}</td>
-            </tr>
-            <tr>
-                <td><strong>Date:</strong></td>
-                <td>${metadata.created || new Date().toISOString().split('T')[0]}</td>
-            </tr>
-            <tr>
-                <td><strong>Status:</strong></td>
-                <td>${metadata.status || 'Draft'}</td>
-            </tr>
-            ${metadata.project_id ? `<tr><td><strong>Project ID:</strong></td><td>${metadata.project_id}</td></tr>` : ''}
-            ${metadata.classification ? `<tr><td><strong>Classification:</strong></td><td>${metadata.classification}</td></tr>` : ''}
-        </table>
+    <!-- Read Progress Bar -->
+    <div class="read-progress-bar" id="readProgressBar"></div>
+    
+    <!-- Print Button -->
+    <button class="print-button" onclick="window.print()" title="Print Document">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+            <path d="M6 14h12v8H6z"/>
+        </svg>
+    </button>
+    
+    <!-- Document Header - Foldable -->
+    <div class="document-header" id="documentHeader">
+        <button class="document-header-toggle" onclick="toggleMetadata()">
+            <span>Document Metadata</span>
+            <svg class="chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </button>
+        <div class="document-header-content">
+            <table>
+                <tr>
+                    <th colspan="2">${metadata.title || 'Untitled Document'}</th>
+                </tr>
+                <tr>
+                    <td><strong>Document Type:</strong></td>
+                    <td>${metadata.document_type || metadata.iso_doc_type || 'StRS'}</td>
+                </tr>
+                <tr>
+                    <td><strong>Author:</strong></td>
+                    <td>${metadata.author || 'Unknown Author'}</td>
+                </tr>
+                <tr>
+                    <td><strong>Version:</strong></td>
+                    <td>${metadata.version || '1.0.0'}</td>
+                </tr>
+                <tr>
+                    <td><strong>Date:</strong></td>
+                    <td>${metadata.created || new Date().toISOString().split('T')[0]}</td>
+                </tr>
+                <tr>
+                    <td><strong>Status:</strong></td>
+                    <td>${metadata.status || 'Draft'}</td>
+                </tr>
+                ${metadata.project_id ? `<tr><td><strong>Project ID:</strong></td><td>${metadata.project_id}</td></tr>` : ''}
+                ${metadata.classification ? `<tr><td><strong>Classification:</strong></td><td>${metadata.classification}</td></tr>` : ''}
+            </table>
+        </div>
     </div>
     
     <div class="main-container">
@@ -334,13 +446,36 @@ const templates = {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
     <script>
         Prism.highlightAll();
-        // Make TOC collapsible
+        
+        // Toggle metadata header
+        function toggleMetadata() {
+            const header = document.getElementById('documentHeader');
+            header.classList.toggle('collapsed');
+        }
+        
+        // Read progress bar
+        function updateProgressBar() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('readProgressBar').style.width = scrolled + '%';
+        }
+        
+        window.addEventListener('scroll', updateProgressBar);
+        
+        // Make TOC items collapsible
         document.addEventListener('DOMContentLoaded', function() {
-            const tocHeaders = document.querySelectorAll('.table-of-contents h2, .contents h2');
-            tocHeaders.forEach(function(header) {
-                header.addEventListener('click', function() {
-                    const toc = this.closest('.table-of-contents, .contents');
-                    if (toc) toc.classList.toggle('collapsed');
+            const tocToggles = document.querySelectorAll('.toc-toggle');
+            tocToggles.forEach(function(toggle) {
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const targetId = this.getAttribute('data-target');
+                    const targetDiv = document.getElementById(targetId);
+                    if (targetDiv) {
+                        targetDiv.classList.toggle('collapsed');
+                        this.textContent = targetDiv.classList.contains('collapsed') ? '▶' : '▼';
+                    }
                 });
             });
         });
@@ -837,6 +972,54 @@ const templates = {
     <style>
         .math-block { margin: 1.5rem 0; overflow-x: auto; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* Progress Bar */
+        .read-progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #1e3a5f, #8b2635);
+            z-index: 10000;
+            transition: width 0.1s ease-out;
+        }
+        
+        /* Print Button */
+        .print-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1e3a5f;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(30, 58, 95, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .print-button:hover {
+            background: #8b2635;
+            transform: scale(1.1);
+        }
+        
+        .print-button svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        @media print {
+            .print-button { display: none; }
+            .read-progress-bar { display: none; }
+        }
+        
         body {
             font-family: 'EB Garamond', Georgia, 'Times New Roman', serif;
             color: #2b2a27;
@@ -848,30 +1031,88 @@ const templates = {
             text-rendering: optimizeLegibility;
             hyphens: auto;
         }
+        
+        /* Foldable Metadata Header */
         header.title {
-            text-align: center;
             margin-bottom: 2.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 2px solid #e5dbc8;
+            border: 1px solid #d4d1c7;
+            border-radius: 4px;
+            overflow: hidden;
         }
-        header.title h1 {
+        
+        .metadata-toggle {
+            width: 100%;
+            background: #1e3a5f;
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'EB Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .metadata-toggle:hover {
+            background: #4a5f7a;
+        }
+        
+        .metadata-toggle .chevron {
+            transition: transform 0.3s ease;
+        }
+        
+        header.title.collapsed .chevron {
+            transform: rotate(-90deg);
+        }
+        
+        .metadata-content {
+            background: #f7f6f2;
+            padding: 1.5rem;
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        
+        header.title.collapsed .metadata-content {
+            max-height: 0;
+            padding: 0 1.5rem;
+        }
+        
+        .metadata-content h1 {
             font-size: 2.2rem;
             letter-spacing: .01em;
             color: #1e262d;
             font-weight: 600;
             margin-bottom: .75rem;
             line-height: 1.2;
+            border-bottom: 2px solid #d4d1c7;
+            padding-bottom: 0.5rem;
         }
-        header.title .meta {
+        
+        .metadata-content .meta {
             color: #6b6257;
             font-size: 0.95rem;
             line-height: 1.6;
+            padding-top: 0.75rem;
         }
+        
         .contents { margin: 1rem 0 2rem; }
         .contents .table-of-contents {
-            background: #fffdf9; border: 1px solid #e5dbc8; border-radius: 6px; padding: 1.25rem;
+            background: #fffdf9; border: 1px solid #d4d1c7; border-radius: 6px; padding: 1.25rem;
         }
-        .contents .table-of-contents h2 { font-size: 1.15rem; color: #8c6d3a; letter-spacing: .06em; font-variant: small-caps; margin-bottom: .5rem; }
+        .contents .table-of-contents h2 { 
+            font-size: 1.15rem; 
+            color: #1e3a5f; 
+            letter-spacing: .06em; 
+            font-variant: small-caps; 
+            margin-bottom: .5rem;
+            font-weight: 600;
+            border-bottom: 2px solid #d4d1c7;
+            padding-bottom: 0.5rem;
+        }
         .contents .table-of-contents ul { list-style: none; padding-left: 0; }
         .contents .table-of-contents li { margin: .4rem 0; }
         .contents .table-of-contents li.has-children { margin: 0.5rem 0; }

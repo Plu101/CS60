@@ -1,24 +1,31 @@
-/* Modern Minimal Design - BRANDLESSE Inspired */
+/* Modern Academic Design - Professional Colors */
 
 :root {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f8f8f8;
-    --text-primary: #000000;
-    --text-secondary: #666666;
-    --border-color: #e5e5e5;
-    --accent-color: #000000;
-    --hover-bg: #f0f0f0;
-    --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --bg-primary: #fdfdfb;
+    --bg-secondary: #f7f6f2;
+    --text-primary: #1a1a2e;
+    --text-secondary: #5f6368;
+    --border-color: #d4d1c7;
+    --accent-color: #1e3a5f;
+    --accent-secondary: #8b2635;
+    --accent-tertiary: #4a5f7a;
+    --hover-bg: #ebe9e3;
+    --shadow: 0 2px 12px rgba(30, 58, 95, 0.08);
+    --shadow-lg: 0 8px 28px rgba(30, 58, 95, 0.15);
+    --progress-bar: #1e3a5f;
 }
 
 [data-theme="dark"] {
-    --bg-primary: #0a0a0a;
-    --bg-secondary: #161616;
-    --text-primary: #ffffff;
-    --text-secondary: #a0a0a0;
-    --border-color: #2a2a2a;
-    --hover-bg: #1f1f1f;
+    --bg-primary: #16161d;
+    --bg-secondary: #1e1e28;
+    --text-primary: #e8e6e1;
+    --text-secondary: #a8a7a0;
+    --border-color: #3a3a48;
+    --accent-color: #6b92c0;
+    --accent-secondary: #c75c6f;
+    --accent-tertiary: #7a91ad;
+    --hover-bg: #2a2a38;
+    --progress-bar: #6b92c0;
 }
 
 * {
