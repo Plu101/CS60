@@ -554,21 +554,6 @@ const templates = {
         h2 { font-size: 2rem; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem; color: var(--primary); }
         h3 { font-size: 1.5rem; color: var(--primary); }
         
-        .content h2, .content h3 {
-            cursor: pointer;
-        }
-        .content h2::before, .content h3::before {
-            content: '▼ ';
-            font-size: 0.6em;
-            vertical-align: middle;
-            display: inline-block;
-            margin-right: 8px;
-            transition: transform 0.2s;
-        }
-        .content h2.collapsed::before, .content h3.collapsed::before {
-            transform: rotate(-90deg);
-        }
-        
         p { margin: 1rem 0; }
         
         img, svg {
@@ -720,22 +705,6 @@ const templates = {
                     if (targetDiv) {
                         targetDiv.classList.toggle('collapsed');
                         this.textContent = targetDiv.classList.contains('collapsed') ? '▶' : '▼';
-                    }
-                });
-            });
-            
-            // Collapsible Content Headings
-            document.querySelectorAll('.content h2, .content h3').forEach(heading => {
-                heading.addEventListener('click', () => {
-                    heading.classList.toggle('collapsed');
-                    let next = heading.nextElementSibling;
-                    while (next && !['H1','H2','H3'].includes(next.tagName)) {
-                        if (next.style.display === 'none') {
-                            next.style.display = '';
-                        } else {
-                            next.style.display = 'none';
-                        }
-                        next = next.nextElementSibling;
                     }
                 });
             });
