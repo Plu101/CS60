@@ -187,12 +187,26 @@ const templates = {
             line-height: 1.8;
         }
         
-        img {
+        img, svg {
             max-width: ${metadata.image_size || '80%'};
             height: auto;
             display: block;
             margin: 1.5rem auto;
             border-radius: 4px;
+        }
+        
+        svg {
+            background: #fff;
+            border: 1px solid #ddd;
+        }
+        
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
         }
         
         pre {
@@ -488,13 +502,27 @@ const templates = {
         
         p { margin: 1rem 0; }
         
-        img {
+        img, svg {
             max-width: ${metadata.image_size || '80%'};
             height: auto;
             display: block;
             margin: 2rem auto;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        svg {
+            background: #fff;
+            border: 1px solid #ddd;
+        }
+        
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
         }
         
         pre {
@@ -669,11 +697,26 @@ const templates = {
             hanging-punctuation: first;
         }
         
-        img {
+        img, svg {
             max-width: ${metadata.image_size || '80%'};
             height: auto;
             display: block;
             margin: 2rem auto;
+        }
+        
+        svg {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
         }
         
         pre {
@@ -848,7 +891,8 @@ const templates = {
         ul, ol { margin: 1rem 0; padding-left: 2rem; }
         li { margin: 0.5rem 0; }
         blockquote { border-left: 4px solid #8c6d3a; padding-left: 1rem; margin: 1.5rem 0; font-style: italic; color: #5a5247; }
-        img { max-width: ${metadata.image_size || '80%'}; height: auto; display: block; margin: 1.5rem auto; border: 1px solid #e5dbc8; border-radius: 4px; }
+        img, svg { max-width: ${metadata.image_size || '80%'}; height: auto; display: block; margin: 1.5rem auto; border: 1px solid #e5dbc8; border-radius: 4px; }
+        svg { background: #fff; border: 1px solid #ddd; }
         pre { background: #f6f2e9; border: 1px solid #e5dbc8; padding: 1rem; border-radius: 4px; overflow-x: auto; margin: 1rem 0; }
         code { font-family: 'Crimson Text', 'EB Garamond', serif; background: #f6f2e9; padding: .2rem .4rem; border-radius: 3px; }
         table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
@@ -973,11 +1017,26 @@ const templates = {
             margin: 1.5rem 0 1rem;
         }
         
-        img {
+        img, svg {
             max-width: ${metadata.image_size || '80%'};
             height: auto;
             display: block;
             margin: 1rem auto;
+        }
+        
+        svg {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
         }
         
         @page {
@@ -1197,13 +1256,18 @@ const templates = {
             color: #475569;
         }
         
-        img {
+        img, svg {
             max-width: ${metadata.image_size || '80%'};
             height: auto;
             display: block;
             margin: 2rem auto;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
+        }
+        
+        svg {
+            background: #fff;
+            border: 1px solid #ddd;
         }
         
         pre {
@@ -1369,11 +1433,26 @@ const templates = {
         
         p { margin: 1rem 0; }
         
-        img {
+        img, svg {
             max-width: ${metadata.image_size || '100%'};
             height: auto;
             display: block;
             margin: 1.5rem auto;
+        }
+        
+        svg {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
         }
         
         pre {
