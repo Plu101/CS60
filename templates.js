@@ -501,12 +501,60 @@ const templates = {
     <style>
         .math-block { margin: 1.5rem 0; overflow-x: auto; }
         :root {
-            --primary: #0ea5e9;
-            --primary-dark: #0284c7;
-            --bg: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
-            --sidebar-bg: #f8fafc;
+            --primary: #1e3a5f;
+            --primary-dark: #4a5f7a;
+            --accent: #8b2635;
+            --bg: #fdfdfb;
+            --text: #1a1a2e;
+            --border: #d4d1c7;
+            --sidebar-bg: #f7f6f2;
+        }
+        
+        /* Progress Bar */
+        .read-progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            z-index: 10000;
+            transition: width 0.1s ease-out;
+        }
+        
+        /* Print Button */
+        .print-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(30, 58, 95, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .print-button:hover {
+            background: var(--accent);
+            transform: scale(1.1);
+        }
+        
+        .print-button svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        @media print {
+            .print-button { display: none; }
+            .read-progress-bar { display: none; }
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -518,27 +566,65 @@ const templates = {
             background: var(--bg);
         }
         
+        /* Foldable Header */
         .project-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 3rem 2rem;
-            text-align: center;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 2rem;
         }
         
-        .project-header h1 {
+        .project-header-toggle {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .project-header-toggle:hover {
+            opacity: 0.9;
+        }
+        
+        .project-header-toggle .chevron {
+            transition: transform 0.3s ease;
+        }
+        
+        .project-header.collapsed .chevron {
+            transform: rotate(-90deg);
+        }
+        
+        .project-header-content {
+            background: var(--sidebar-bg);
+            padding: 2rem;
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        
+        .project-header.collapsed .project-header-content {
+            max-height: 0;
+            padding: 0 2rem;
+        }
+        
+        .project-header-content h1 {
             font-size: 2.2rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
             font-weight: 600;
             letter-spacing: 0.01em;
+            color: var(--text);
         }
         
         .project-meta {
             display: flex;
-            justify-content: center;
             gap: 2rem;
-            margin-top: 1rem;
             font-size: 0.95rem;
-            opacity: 0.95;
+            color: #5f6368;
         }
         
         .container {
@@ -563,20 +649,9 @@ const templates = {
             font-size: 1.1rem;
             margin-bottom: 1rem;
             color: var(--primary);
-            cursor: pointer;
-            user-select: none;
-        }
-        .table-of-contents h2::before {
-            content: '▼ ';
-            font-size: 0.8em;
-            transition: transform 0.2s;
-            display: inline-block;
-        }
-        .table-of-contents.collapsed h2::before {
-            content: '▶ ';
-        }
-        .table-of-contents.collapsed > ul {
-            display: none;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
         }
         
         .table-of-contents ul {
@@ -690,7 +765,7 @@ const templates = {
         }
         
         blockquote {
-            border-left: 4px solid var(--primary);
+            border-left: 4px solid var(--accent);
             padding-left: 1rem;
             margin: 1.5rem 0;
             font-style: italic;
@@ -707,12 +782,31 @@ const templates = {
     </style>
 </head>
 <body>
-    <header class="project-header">
-        <h1>${metadata.title || 'Project Documentation'}</h1>
-        <div class="project-meta">
-            <span>Author: ${metadata.author || 'Unknown Author'}</span>
-            <span>Date: ${metadata.created || new Date().toISOString().split('T')[0]}</span>
-            <span>Version: v${metadata.version || '1.0.0'}</span>
+    <!-- Read Progress Bar -->
+    <div class="read-progress-bar" id="readProgressBar"></div>
+    
+    <!-- Print Button -->
+    <button class="print-button" onclick="window.print()" title="Print Document">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+            <path d="M6 14h12v8H6z"/>
+        </svg>
+    </button>
+    
+    <header class="project-header" id="projectHeader">
+        <button class="project-header-toggle" onclick="toggleMetadata()">
+            <span>Project Information</span>
+            <svg class="chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </button>
+        <div class="project-header-content">
+            <h1>${metadata.title || 'Project Documentation'}</h1>
+            <div class="project-meta">
+                <span><strong>Author:</strong> ${metadata.author || 'Unknown Author'}</span>
+                <span><strong>Date:</strong> ${metadata.created || new Date().toISOString().split('T')[0]}</span>
+                <span><strong>Version:</strong> v${metadata.version || '1.0.0'}</span>
+            </div>
         </div>
     </header>
     
@@ -726,15 +820,24 @@ const templates = {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
     <script>
         Prism.highlightAll();
+        
+        // Toggle metadata header
+        function toggleMetadata() {
+            const header = document.getElementById('projectHeader');
+            header.classList.toggle('collapsed');
+        }
+        
+        // Read progress bar
+        function updateProgressBar() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('readProgressBar').style.width = scrolled + '%';
+        }
+        
+        window.addEventListener('scroll', updateProgressBar);
+        
         document.addEventListener('DOMContentLoaded', function() {
-            const tocHeaders = document.querySelectorAll('.table-of-contents h2');
-            tocHeaders.forEach(function(header) {
-                header.addEventListener('click', function() {
-                    const toc = this.closest('.table-of-contents');
-                    if (toc) toc.classList.toggle('collapsed');
-                });
-            });
-            
             const tocToggles = document.querySelectorAll('.toc-toggle');
             tocToggles.forEach(function(toggle) {
                 toggle.addEventListener('click', function(e) {
@@ -1121,34 +1224,55 @@ const templates = {
         .contents .table-of-contents .toc-children.collapsed { display: none; }
         .contents .table-of-contents .toc-children ul { padding-left: 0.5rem; }
         .contents .table-of-contents a { color: #5a5247; text-decoration: none; }
-        .contents .table-of-contents a:hover { text-decoration: underline; color: #8c6d3a; }
+        .contents .table-of-contents a:hover { text-decoration: underline; color: #1e3a5f; }
         main.content { margin-top: 1rem; }
         h1, h2, h3, h4 { color: #1e262d; margin: 2rem 0 1rem; font-weight: 600; }
-        h2 { font-size: 1.5rem; border-bottom: 1px solid #e5dbc8; padding-bottom: .5rem; margin-top: 2.5rem; }
+        h2 { font-size: 1.5rem; border-bottom: 1px solid #d4d1c7; padding-bottom: .5rem; margin-top: 2.5rem; }
         h3 { font-size: 1.25rem; margin-top: 2rem; }
         h4 { font-size: 1.1rem; }
         p { text-align: justify; margin: 1rem 0; line-height: 1.9; }
         p:first-of-type { margin-top: 0; }
         ul, ol { margin: 1rem 0; padding-left: 2rem; }
         li { margin: 0.5rem 0; }
-        blockquote { border-left: 4px solid #8c6d3a; padding-left: 1rem; margin: 1.5rem 0; font-style: italic; color: #5a5247; }
-        img, svg { max-width: ${metadata.image_size || '80%'}; height: auto; display: block; margin: 1.5rem auto; border: 1px solid #e5dbc8; border-radius: 4px; }
+        blockquote { border-left: 4px solid #8b2635; padding-left: 1rem; margin: 1.5rem 0; font-style: italic; color: #5a5247; }
+        img, svg { max-width: ${metadata.image_size || '80%'}; height: auto; display: block; margin: 1.5rem auto; border: 1px solid #d4d1c7; border-radius: 4px; }
         svg { background: #fff; border: 1px solid #ddd; }
-        pre { background: #f6f2e9; border: 1px solid #e5dbc8; padding: 1rem; border-radius: 4px; overflow-x: auto; margin: 1rem 0; }
+        pre { background: #f6f2e9; border: 1px solid #d4d1c7; padding: 1rem; border-radius: 4px; overflow-x: auto; margin: 1rem 0; }
         code { font-family: 'Crimson Text', 'EB Garamond', serif; background: #f6f2e9; padding: .2rem .4rem; border-radius: 3px; }
         table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
-        th, td { padding: .75rem; border: 1px solid #e5dbc8; text-align: left; }
+        th, td { padding: .75rem; border: 1px solid #d4d1c7; text-align: left; }
         th { background: #fffdf9; font-weight: 600; }
-        footer.foot { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #e5dbc8; text-align: center; color: #6b6257; font-size: .95rem; }
+        footer.foot { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #d4d1c7; text-align: center; color: #6b6257; font-size: .95rem; }
         @media print { body { max-width: 100%; padding: 1in; } .contents { page-break-after: always; } }
     </style>
 </head>
 <body>
-    <header class="title">
-        <h1>${metadata.title || 'Academic Paper'}</h1>
-        <div class="meta">
-            <div>${metadata.author || 'Author Name'}</div>
-            <div>${metadata.institution ? metadata.institution + ' • ' : ''}${metadata.created || new Date().toISOString().split('T')[0]} • v${metadata.version || '1.0.0'}</div>
+    <!-- Read Progress Bar -->
+    <div class="read-progress-bar" id="readProgressBar"></div>
+    
+    <!-- Print Button -->
+    <button class="print-button" onclick="window.print()" title="Print Document">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+            <path d="M6 14h12v8H6z"/>
+        </svg>
+    </button>
+    
+    <header class="title" id="metadataHeader">
+        <button class="metadata-toggle" onclick="toggleMetadata()">
+            <span>Document Information</span>
+            <svg class="chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </button>
+        <div class="metadata-content">
+            <h1>${metadata.title || 'Academic Paper'}</h1>
+            <div class="meta">
+                <div><strong>Author:</strong> ${metadata.author || 'Author Name'}</div>
+                <div><strong>Institution:</strong> ${metadata.institution || 'N/A'}</div>
+                <div><strong>Date:</strong> ${metadata.created || new Date().toISOString().split('T')[0]}</div>
+                <div><strong>Version:</strong> ${metadata.version || '1.0.0'}</div>
+            </div>
         </div>
     </header>
     ${toc ? `<section class="contents">${toc}</section>` : ''}
@@ -1158,15 +1282,24 @@ const templates = {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script>
         Prism.highlightAll();
-        document.addEventListener('DOMContentLoaded', function() {
-            const tocHeaders = document.querySelectorAll('.contents .table-of-contents h2');
-            tocHeaders.forEach(function(header) {
-                header.addEventListener('click', function() {
-                    const toc = this.closest('.table-of-contents');
-                    if (toc) toc.classList.toggle('collapsed');
-                });
-            });
-            
+        
+        // Toggle metadata
+        function toggleMetadata() {
+            const header = document.getElementById('metadataHeader');
+            header.classList.toggle('collapsed');
+        }
+        
+        // Read progress bar
+        function updateProgressBar() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('readProgressBar').style.width = scrolled + '%';
+        }
+        
+        window.addEventListener('scroll', updateProgressBar);
+        
+        document.addEventListener('DOMContentLoaded', function() {            
             const tocToggles = document.querySelectorAll('.toc-toggle');
             tocToggles.forEach(function(toggle) {
                 toggle.addEventListener('click', function(e) {
