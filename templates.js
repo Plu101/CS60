@@ -736,7 +736,8 @@ const templates = {
         }
         
         pre {
-            background: #1e293b;
+            background: var(--sidebar-bg);
+            border: 1px solid var(--border);
             padding: 1.5rem;
             border-radius: 8px;
             overflow-x: auto;
@@ -746,12 +747,21 @@ const templates = {
         code {
             font-family: 'Fira Code', 'Consolas', monospace;
             font-size: 0.9em;
+            background: var(--sidebar-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 1.5rem 0;
+            border: 1px solid var(--border);
         }
         
         th, td {
@@ -760,7 +770,8 @@ const templates = {
         }
         
         th {
-            background: var(--sidebar-bg);
+            background: var(--primary);
+            color: white;
             font-weight: 600;
         }
         
@@ -769,7 +780,10 @@ const templates = {
             padding-left: 1rem;
             margin: 1.5rem 0;
             font-style: italic;
-            color: #64748b;
+            color: #5f6368;
+            background: var(--sidebar-bg);
+            padding: 1rem 1rem 1rem 1.5rem;
+            border-radius: 4px;
         }
         
         ul, ol { margin: 1rem 0; padding-left: 2rem; }
@@ -876,6 +890,53 @@ const templates = {
         .math-block { margin: 1.5rem 0; overflow-x: auto; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
+        /* Progress Bar */
+        .read-progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #1e3a5f, #8b2635);
+            z-index: 10000;
+            transition: width 0.1s ease-out;
+        }
+        
+        /* Print Button */
+        .print-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1e3a5f;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(30, 58, 95, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .print-button:hover {
+            background: #8b2635;
+            transform: scale(1.1);
+        }
+        
+        .print-button svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        @media print {
+            .print-button { display: none; }
+            .read-progress-bar { display: none; }
+        }
+        
         body {
             font-family: 'EB Garamond', Georgia, 'Times New Roman', serif;
             line-height: 1.9;
@@ -890,18 +951,62 @@ const templates = {
         }
         
         .header {
-            text-align: center;
             margin-bottom: 3rem;
-            padding-bottom: 2rem;
-            border-bottom: 2px solid #e5dbc8;
+            border: 1px solid #d4d1c7;
+            border-radius: 4px;
+            overflow: hidden;
         }
         
-        .header h1 {
+        .header-toggle {
+            width: 100%;
+            background: #1e3a5f;
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'EB Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .header-toggle:hover {
+            background: #4a5f7a;
+        }
+        
+        .header-toggle .chevron {
+            transition: transform 0.3s ease;
+        }
+        
+        .header.collapsed .chevron {
+            transform: rotate(-90deg);
+        }
+        
+        .header-content {
+            background: #f7f6f2;
+            padding: 2rem;
+            text-align: center;
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        
+        .header.collapsed .header-content {
+            max-height: 0;
+            padding: 0 2rem;
+        }
+        
+        .header-content h1 {
             font-size: 2.2rem;
             margin-bottom: 1rem;
             color: #1e262d;
             letter-spacing: 0.02em;
             font-variant: small-caps;
+            border-bottom: 2px solid #d4d1c7;
+            padding-bottom: 0.5rem;
         }
         
         .header-info {
@@ -997,7 +1102,7 @@ const templates = {
         }
         
         blockquote {
-            border-left: 4px solid #8c6d3a;
+            border-left: 4px solid #8b2635;
             padding-left: 1rem;
             margin: 1.5rem 0;
             font-style: italic;
@@ -1031,14 +1136,33 @@ const templates = {
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>${metadata.title || 'Academic Assignment'}</h1>
-        <div class="header-info">
-            <div><strong>Student:</strong> ${metadata.author || metadata.student || 'Unknown'}</div>
-            ${metadata.course ? `<div><strong>Course:</strong> ${metadata.course}</div>` : ''}
-            ${metadata.instructor ? `<div><strong>Instructor:</strong> ${metadata.instructor}</div>` : ''}
-            ${metadata.institution ? `<div><strong>Institution:</strong> ${metadata.institution}</div>` : ''}
-            <div><strong>Date:</strong> ${metadata.created || new Date().toISOString().split('T')[0]}</div>
+    <!-- Read Progress Bar -->
+    <div class="read-progress-bar" id="readProgressBar"></div>
+    
+    <!-- Print Button -->
+    <button class="print-button" onclick="window.print()" title="Print Document">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+            <path d="M6 14h12v8H6z"/>
+        </svg>
+    </button>
+    
+    <div class="header" id="headerSection">
+        <button class="header-toggle" onclick="toggleMetadata()">
+            <span>Assignment Information</span>
+            <svg class="chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </button>
+        <div class="header-content">
+            <h1>${metadata.title || 'Academic Assignment'}</h1>
+            <div class="header-info">
+                <div><strong>Student:</strong> ${metadata.author || metadata.student || 'Unknown'}</div>
+                ${metadata.course ? `<div><strong>Course:</strong> ${metadata.course}</div>` : ''}
+                ${metadata.instructor ? `<div><strong>Instructor:</strong> ${metadata.instructor}</div>` : ''}
+                ${metadata.institution ? `<div><strong>Institution:</strong> ${metadata.institution}</div>` : ''}
+                <div><strong>Date:</strong> ${metadata.created || new Date().toISOString().split('T')[0]}</div>
+            </div>
         </div>
     </div>
     
@@ -1052,7 +1176,25 @@ const templates = {
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script>Prism.highlightAll();</script>
+    <script>
+        Prism.highlightAll();
+        
+        // Toggle metadata header
+        function toggleMetadata() {
+            const header = document.getElementById('headerSection');
+            header.classList.toggle('collapsed');
+        }
+        
+        // Read progress bar
+        function updateProgressBar() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('readProgressBar').style.width = scrolled + '%';
+        }
+        
+        window.addEventListener('scroll', updateProgressBar);
+    </script>
 </body>
 </html>`;
         }
