@@ -389,15 +389,40 @@ const templates = {
             top: 0;
             left: 0;
             width: 100%;
-            height: 4px;
+            height: 6px;
             background: transparent;
             z-index: 1000;
         }
         #progress-bar {
             height: 100%;
-            background: var(--secondary);
+            background: rgba(108, 117, 125, 0.5);
             width: 0%;
             transition: width 0.1s;
+            backdrop-filter: blur(2px);
+        }
+
+        .project-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .project-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            color: white;
+        }
+        
+        .project-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            font-size: 1rem;
+            opacity: 0.9;
         }
         
         .project-metadata {
@@ -406,12 +431,15 @@ const templates = {
             margin-bottom: 2rem;
         }
         .project-metadata summary {
-            padding: 1rem 2rem;
+            padding: 0.75rem 2rem;
             cursor: pointer;
-            font-weight: 600;
-            background: var(--primary);
-            color: white;
+            font-weight: 500;
+            background: #e9ecef;
+            color: var(--primary);
             list-style: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         .project-metadata summary::-webkit-details-marker {
             display: none;
@@ -426,14 +454,23 @@ const templates = {
         }
         .metadata-content {
             padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border);
         }
         .meta-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+            gap: 1.5rem;
+        }
+        .meta-item {
+            font-size: 0.95rem;
         }
         .meta-item strong {
             color: var(--primary);
+            display: block;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+            opacity: 0.8;
         }
         
         .container {
@@ -617,22 +654,35 @@ const templates = {
             .container { grid-template-columns: 1fr; }
             .project-metadata { break-inside: avoid; }
             .content { padding: 0; }
+            .project-header { padding: 2rem 0; color: black; background: none; text-align: left; border-bottom: 2px solid black; }
+            .project-header h1 { color: black; margin-bottom: 0.5rem; }
+            .project-meta { color: black; justify-content: flex-start; margin-top: 0.5rem; }
         }
     </style>
 </head>
 <body>
     <div id="progress-container"><div id="progress-bar"></div></div>
 
-    <details class="project-metadata" open>
+    <header class="project-header">
+        <h1>${metadata.title || 'Project Documentation'}</h1>
+        <div class="project-meta">
+            <span>Author: ${metadata.author || 'Unknown Author'}</span>
+            <span>Date: ${metadata.created || new Date().toISOString().split('T')[0]}</span>
+            <span>Version: v${metadata.version || '1.0.0'}</span>
+        </div>
+    </header>
+
+    <details class="project-metadata">
         <summary>Document Metadata</summary>
         <div class="metadata-content">
             <div class="meta-grid">
-                <div class="meta-item"><strong>Title:</strong> ${metadata.title || 'Project Documentation'}</div>
-                <div class="meta-item"><strong>Author:</strong> ${metadata.author || 'Unknown Author'}</div>
-                <div class="meta-item"><strong>Date:</strong> ${metadata.created || new Date().toISOString().split('T')[0]}</div>
-                <div class="meta-item"><strong>Version:</strong> ${metadata.version || '1.0.0'}</div>
-                ${metadata.project_id ? `<div class="meta-item"><strong>Project ID:</strong> ${metadata.project_id}</div>` : ''}
-                ${metadata.status ? `<div class="meta-item"><strong>Status:</strong> ${metadata.status}</div>` : ''}
+                <div class="meta-item"><strong>Title</strong> ${metadata.title || 'Project Documentation'}</div>
+                <div class="meta-item"><strong>Author</strong> ${metadata.author || 'Unknown Author'}</div>
+                <div class="meta-item"><strong>Date</strong> ${metadata.created || new Date().toISOString().split('T')[0]}</div>
+                <div class="meta-item"><strong>Version</strong> ${metadata.version || '1.0.0'}</div>
+                ${metadata.project_id ? `<div class="meta-item"><strong>Project ID</strong> ${metadata.project_id}</div>` : ''}
+                ${metadata.status ? `<div class="meta-item"><strong>Status</strong> ${metadata.status}</div>` : ''}
+                ${metadata.classification ? `<div class="meta-item"><strong>Classification</strong> ${metadata.classification}</div>` : ''}
             </div>
         </div>
     </details>
