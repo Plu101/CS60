@@ -550,12 +550,14 @@ function handleReferenceFiles(files, references) {
     const totalFiles = files.length;
     
     Array.from(files).forEach(file => {
+        const isSvg = file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg');
         const reader = new FileReader();
+        
         reader.onload = function(e) {
-            const dataUrl = e.target.result;
-            uploadedFiles[file.name] = dataUrl;
+            const content = e.target.result;
+            uploadedFiles[file.name] = content;
             
-            // Replace references in markdown with data URLs
+            // Replace references in markdown
             references.forEach(ref => {
                 const fileName = ref.path.split('/').pop().split('?')[0]; // Remove query strings
                 const fileNameLower = file.name.toLowerCase();
@@ -565,9 +567,21 @@ function handleReferenceFiles(files, references) {
                     // Escape special regex characters in the path
                     const escapedPath = ref.path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                     const regex = new RegExp(`!\\[([^\\]]*)\\]\\(${escapedPath}\\)`, 'g');
-                    currentMarkdownText = currentMarkdownText.replace(regex, `![$1](${dataUrl})`);
                     
-                    console.log(`Embedded image: ${file.name}`);
+                    if (isSvg) {
+                        // For SVG, inject the raw content directly (1:1)
+                        // We strip XML declaration if present to avoid rendering issues in HTML
+                        let svgContent = content;
+                        if (typeof content === 'string') {
+                            svgContent = content.replace(/<\?xml.*?\?>/g, '').trim();
+                        }
+                        currentMarkdownText = currentMarkdownText.replace(regex, svgContent);
+                        console.log(`Embedded SVG: ${file.name}`);
+                    } else {
+                        // For other images, use Data URL
+                        currentMarkdownText = currentMarkdownText.replace(regex, `![$1](${content})`);
+                        console.log(`Embedded image: ${file.name}`);
+                    }
                 }
             });
             
@@ -576,10 +590,15 @@ function handleReferenceFiles(files, references) {
             // Update preview after all files are processed
             if (filesProcessed === totalFiles) {
                 convertMarkdown();
-                console.log(`Successfully embedded ${filesProcessed} image(s)`);
+                console.log(`Successfully processed ${filesProcessed} file(s)`);
             }
         };
-        reader.readAsDataURL(file);
+        
+        if (isSvg) {
+            reader.readAsText(file);
+        } else {
+            reader.readAsDataURL(file);
+        }
     });
     
     closeFileRefs();
