@@ -1,6 +1,7 @@
 // Main application logic
 let currentMarkdownText = '';
 let currentFileName = '';
+let svgFiles = {}; // Store SVG content by filename for post-processing
 
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
@@ -225,7 +226,10 @@ function convertMarkdown() {
             const result = converter.convert(currentMarkdownText, options);
 
             // Render full template inside an iframe so the preview matches export exactly
-            const htmlContent = converter.getConvertedHTML();
+            let htmlContent = converter.getConvertedHTML();
+            
+            // Post-process: Replace <img> tags with SVG data URLs with raw SVG content
+            htmlContent = embedSvgInHtml(htmlContent);
             const iframe = document.createElement('iframe');
             iframe.setAttribute('title', 'Document Preview');
             iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox');
@@ -545,6 +549,55 @@ function closeFileRefs() {
     document.getElementById('fileRefsPanel').style.display = 'none';
 }
 
+function embedSvgInHtml(html) {
+    // Replace <img> tags that reference SVG data URLs with raw SVG content
+    Object.keys(svgFiles).forEach(filename => {
+        const svgContent = svgFiles[filename];
+        
+        // Find all img tags with data:image/svg+xml that might reference this file
+        // We'll match any img tag with SVG data URL and replace it with raw SVG
+        const imgRegex = /<img([^>]*?)src=["']data:image\/svg\+xml;base64,([^"']+)["']([^>]*?)>/gi;
+        
+        html = html.replace(imgRegex, (match, beforeSrc, base64Data, afterSrc) => {
+            try {
+                // Decode base64 to check if it matches our stored SVG
+                const decodedSvg = atob(base64Data);
+                
+                // Check if this decoded SVG matches one of our stored SVGs
+                // (comparing a portion to avoid exact match issues)
+                const matches = Object.values(svgFiles).some(svg => {
+                    const cleanSvg = svg.replace(/\s+/g, ' ').substring(0, 200);
+                    const cleanDecoded = decodedSvg.replace(/\s+/g, ' ').substring(0, 200);
+                    return cleanDecoded.includes(cleanSvg.substring(0, 100)) || 
+                           cleanSvg.includes(cleanDecoded.substring(0, 100));
+                });
+                
+                if (matches) {
+                    // Extract alt text if present
+                    const altMatch = match.match(/alt=["']([^"']*)["']/);
+                    const altText = altMatch ? altMatch[1] : '';
+                    
+                    // Return raw SVG with role and title for accessibility
+                    const svgWithAria = svgContent.replace(
+                        /<svg/,
+                        `<svg role="img" aria-label="${altText}"`
+                    );
+                    
+                    console.log(`Replaced img tag with raw SVG content (alt: ${altText})`);
+                    return svgWithAria;
+                }
+            } catch (e) {
+                console.error('Error processing SVG:', e);
+            }
+            
+            // If no match or error, return original img tag
+            return match;
+        });
+    });
+    
+    return html;
+}
+
 function handleReferenceFiles(files, references) {
     let filesProcessed = 0;
     const totalFiles = files.length;
@@ -557,6 +610,16 @@ function handleReferenceFiles(files, references) {
             const content = e.target.result;
             uploadedFiles[file.name] = content;
             
+            if (isSvg) {
+                // Store SVG content for post-processing (strip XML declaration)
+                let svgContent = content;
+                if (typeof content === 'string') {
+                    svgContent = content.replace(/<\?xml.*?\?>/g, '').trim();
+                }
+                svgFiles[file.name] = svgContent;
+                console.log(`Stored SVG: ${file.name}`);
+            }
+            
             // Replace references in markdown
             references.forEach(ref => {
                 const fileName = ref.path.split('/').pop().split('?')[0]; // Remove query strings
@@ -568,20 +631,10 @@ function handleReferenceFiles(files, references) {
                     const escapedPath = ref.path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                     const regex = new RegExp(`!\\[([^\\]]*)\\]\\(${escapedPath}\\)`, 'g');
                     
-                    if (isSvg) {
-                        // For SVG, inject the raw content directly (1:1)
-                        // We strip XML declaration if present to avoid rendering issues in HTML
-                        let svgContent = content;
-                        if (typeof content === 'string') {
-                            svgContent = content.replace(/<\?xml.*?\?>/g, '').trim();
-                        }
-                        currentMarkdownText = currentMarkdownText.replace(regex, svgContent);
-                        console.log(`Embedded SVG: ${file.name}`);
-                    } else {
-                        // For other images, use Data URL
-                        currentMarkdownText = currentMarkdownText.replace(regex, `![$1](${content})`);
-                        console.log(`Embedded image: ${file.name}`);
-                    }
+                    // Always use Data URL for initial markdown conversion
+                    // SVGs will be post-processed after HTML generation
+                    currentMarkdownText = currentMarkdownText.replace(regex, `![$1](${content})`);
+                    console.log(`Embedded file: ${file.name}`);
                 }
             });
             
