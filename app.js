@@ -167,89 +167,33 @@ function clearFile() {
 }
 
 function enableButtons() {
-    // Replace <img> tags whose src is an SVG data URL with inline <svg> markup.
-    // This avoids browsers treating the SVG as an external image and enables better styling/printing.
+    const buttons = document.querySelectorAll('button.action-btn, .btn-primary, .btn-secondary');
+    buttons.forEach(btn => btn.disabled = false);
+}
 
-    const decodeSvgDataUrl = (src) => {
-        if (!src || typeof src !== 'string') return null;
-        if (!src.toLowerCase().startsWith('data:image/svg+xml')) return null;
+function disableButtons() {
+    const buttons = document.querySelectorAll('button.action-btn, .btn-primary, .btn-secondary');
+    buttons.forEach(btn => btn.disabled = true);
+}
 
-        // base64 form: data:image/svg+xml;base64,....
-        const base64Match = src.match(/^data:image\/svg\+xml(?:;charset=[^;,]+)?;base64,(.*)$/i);
-        if (base64Match) {
-            const b64 = base64Match[1];
-            try {
-                const binary = atob(b64);
-                // Prefer TextDecoder for proper UTF-8 decoding
-                if (typeof TextDecoder !== 'undefined') {
-                    const bytes = new Uint8Array(binary.length);
-                    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-                    return new TextDecoder('utf-8').decode(bytes);
-                }
-                // Fallback: best-effort
-                // eslint-disable-next-line no-undef
-                return decodeURIComponent(escape(binary));
-            } catch (e) {
-                console.error('Failed to decode base64 SVG data URL:', e);
-                return null;
-            }
-        }
+function updateTemplate() {
+    // This function is called but was missing in the selection context, ensuring no reference errors
+    if (currentMarkdownText) {
+        convertMarkdown();
+    }
+}
 
-        // utf8 form: data:image/svg+xml;utf8,<svg ...>
-        const utf8Match = src.match(/^data:image\/svg\+xml(?:;charset=[^;,]+)?;utf8,(.*)$/i);
-        if (utf8Match) {
-            try {
-                return decodeURIComponent(utf8Match[1]);
-            } catch {
-                return utf8Match[1];
-            }
-        }
-
-        // plain data form: data:image/svg+xml,<svg ...>
-        const plainMatch = src.match(/^data:image\/svg\+xml(?:;charset=[^;,]+)?,(.*)$/i);
-        if (plainMatch) {
-            try {
-                return decodeURIComponent(plainMatch[1]);
-            } catch {
-                return plainMatch[1];
-            }
-        }
-
-        return null;
-    };
-
-    const extractAttr = (tag, name) => {
-        const re = new RegExp(`${name}=["']([^"']*)["']`, 'i');
-        const m = tag.match(re);
-        return m ? m[1] : '';
-    };
-
-    const imgRegex = /<img\b[^>]*\bsrc=["'](data:image\/svg\+xml[^"']*)["'][^>]*>/gi;
-    return html.replace(imgRegex, (imgTag, src) => {
-        const decoded = decodeSvgDataUrl(src);
-        if (!decoded) return imgTag;
-
-        let svg = decoded.replace(/<\?xml.*?\?>/g, '').trim();
-        const altText = extractAttr(imgTag, 'alt');
-        const className = extractAttr(imgTag, 'class');
-        const style = extractAttr(imgTag, 'style');
-        const width = extractAttr(imgTag, 'width');
-        const height = extractAttr(imgTag, 'height');
-
-        // Inject a11y + common attributes onto the root <svg> element.
-        svg = svg.replace(/<svg\b([^>]*)>/i, (m, attrs) => {
-            let injected = attrs || '';
-            if (altText && !/\baria-label=/.test(injected)) injected += ` aria-label="${altText}" role="img"`;
-            if (className && !/\bclass=/.test(injected)) injected += ` class="${className}"`;
-            if (style && !/\bstyle=/.test(injected)) injected += ` style="${style}"`;
-            if (width && !/\bwidth=/.test(injected)) injected += ` width="${width}"`;
-            if (height && !/\bheight=/.test(injected)) injected += ` height="${height}"`;
-            return `<svg${injected}>`;
-        });
-
-        console.log(`Inlined SVG from data URL (alt: ${altText || ''})`);
-        return svg;
-    });
+function convertMarkdown() {
+    showLoading();
+    // Use timeout to allow UI to update (show spinner)
+    setTimeout(() => {
+        try {
+            const documentType = document.getElementById('documentType').value;
+            const isoDocType = document.getElementById('isoDocType') ? document.getElementById('isoDocType').checked : false;
+            const showToc = document.getElementById('showToc').checked;
+            
+            const options = {
+                documentType: documentType,
                 showToc: showToc,
                 isoDocType: isoDocType
             };
@@ -260,7 +204,7 @@ function enableButtons() {
                 console.log(`Converting with ${dataUrlImages} embedded image(s)`);
             }
             
-            const result = converter.convert(currentMarkdownText, options);
+            const result = converter.convert(currentMarkdownText, options); // eslint-disable-line no-unused-vars
 
             // Render full template inside an iframe so the preview matches export exactly
             let htmlContent = converter.getConvertedHTML();
@@ -656,6 +600,13 @@ function handleReferenceFiles(files, references) {
                 if (typeof svgContent === 'string') {
                     svgContent = svgContent.replace(/<\?xml.*?\?>/g, '').trim();
                 }
+                // Match the sanitization done during HTML inlining.
+                svgContent = svgContent.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+                    .replace(/\son\w+\s*=\s*"[^"]*"/gi, '')
+                    .replace(/\son\w+\s*=\s*'[^']*'/gi, '')
+                    .replace(/\s(href|xlink:href)\s*=\s*"javascript:[^"]*"/gi, '')
+                    .replace(/\s(href|xlink:href)\s*=\s*'javascript:[^']*'/gi, '')
+                    .trim();
                 svgFiles[file.name] = svgContent;
 
                 try {
