@@ -167,52 +167,89 @@ function clearFile() {
 }
 
 function enableButtons() {
-    document.getElementById('convertBtn').disabled = false;
-    document.getElementById('downloadHtmlBtn').disabled = false;
-    document.getElementById('downloadPdfBtn').disabled = false;
-    document.getElementById('printBtn').disabled = false;
-}
+    // Replace <img> tags whose src is an SVG data URL with inline <svg> markup.
+    // This avoids browsers treating the SVG as an external image and enables better styling/printing.
 
-function disableButtons() {
-    document.getElementById('convertBtn').disabled = true;
-    document.getElementById('downloadHtmlBtn').disabled = true;
-    document.getElementById('downloadPdfBtn').disabled = true;
-    document.getElementById('printBtn').disabled = true;
-}
+    const decodeSvgDataUrl = (src) => {
+        if (!src || typeof src !== 'string') return null;
+        if (!src.toLowerCase().startsWith('data:image/svg+xml')) return null;
 
-function updateTemplate() {
-    const documentType = document.getElementById('documentType').value;
-    const isoSettings = document.getElementById('isoSettings');
-    
-    if (documentType === 'iso-compliant') {
-        isoSettings.style.display = 'block';
-    } else {
-        isoSettings.style.display = 'none';
-    }
-    
-    if (currentMarkdownText) {
-        convertMarkdown();
-    }
-}
+        // base64 form: data:image/svg+xml;base64,....
+        const base64Match = src.match(/^data:image\/svg\+xml(?:;charset=[^;,]+)?;base64,(.*)$/i);
+        if (base64Match) {
+            const b64 = base64Match[1];
+            try {
+                const binary = atob(b64);
+                // Prefer TextDecoder for proper UTF-8 decoding
+                if (typeof TextDecoder !== 'undefined') {
+                    const bytes = new Uint8Array(binary.length);
+                    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+                    return new TextDecoder('utf-8').decode(bytes);
+                }
+                // Fallback: best-effort
+                // eslint-disable-next-line no-undef
+                return decodeURIComponent(escape(binary));
+            } catch (e) {
+                console.error('Failed to decode base64 SVG data URL:', e);
+                return null;
+            }
+        }
 
-function convertMarkdown() {
-    if (!currentMarkdownText) {
-        alert('Please upload a markdown file first');
-        return;
-    }
-    
-    showLoading();
-    
-    setTimeout(() => {
-        try {
-            const documentType = document.getElementById('documentType').value;
-            const imageSize = document.getElementById('imageSize').value;
-            const showToc = document.getElementById('showToc').checked;
-            const isoDocType = document.getElementById('isoDocType') ? document.getElementById('isoDocType').value : 'StRS';
-            
-            const options = {
-                documentType: documentType,
-                imageSize: imageSize + '%',
+        // utf8 form: data:image/svg+xml;utf8,<svg ...>
+        const utf8Match = src.match(/^data:image\/svg\+xml(?:;charset=[^;,]+)?;utf8,(.*)$/i);
+        if (utf8Match) {
+            try {
+                return decodeURIComponent(utf8Match[1]);
+            } catch {
+                return utf8Match[1];
+            }
+        }
+
+        // plain data form: data:image/svg+xml,<svg ...>
+        const plainMatch = src.match(/^data:image\/svg\+xml(?:;charset=[^;,]+)?,(.*)$/i);
+        if (plainMatch) {
+            try {
+                return decodeURIComponent(plainMatch[1]);
+            } catch {
+                return plainMatch[1];
+            }
+        }
+
+        return null;
+    };
+
+    const extractAttr = (tag, name) => {
+        const re = new RegExp(`${name}=["']([^"']*)["']`, 'i');
+        const m = tag.match(re);
+        return m ? m[1] : '';
+    };
+
+    const imgRegex = /<img\b[^>]*\bsrc=["'](data:image\/svg\+xml[^"']*)["'][^>]*>/gi;
+    return html.replace(imgRegex, (imgTag, src) => {
+        const decoded = decodeSvgDataUrl(src);
+        if (!decoded) return imgTag;
+
+        let svg = decoded.replace(/<\?xml.*?\?>/g, '').trim();
+        const altText = extractAttr(imgTag, 'alt');
+        const className = extractAttr(imgTag, 'class');
+        const style = extractAttr(imgTag, 'style');
+        const width = extractAttr(imgTag, 'width');
+        const height = extractAttr(imgTag, 'height');
+
+        // Inject a11y + common attributes onto the root <svg> element.
+        svg = svg.replace(/<svg\b([^>]*)>/i, (m, attrs) => {
+            let injected = attrs || '';
+            if (altText && !/\baria-label=/.test(injected)) injected += ` aria-label="${altText}" role="img"`;
+            if (className && !/\bclass=/.test(injected)) injected += ` class="${className}"`;
+            if (style && !/\bstyle=/.test(injected)) injected += ` style="${style}"`;
+            if (width && !/\bwidth=/.test(injected)) injected += ` width="${width}"`;
+            if (height && !/\bheight=/.test(injected)) injected += ` height="${height}"`;
+            return `<svg${injected}>`;
+        });
+
+        console.log(`Inlined SVG from data URL (alt: ${altText || ''})`);
+        return svg;
+    });
                 showToc: showToc,
                 isoDocType: isoDocType
             };
@@ -608,16 +645,40 @@ function handleReferenceFiles(files, references) {
         
         reader.onload = function(e) {
             const content = e.target.result;
-            uploadedFiles[file.name] = content;
-            
+
+            // For markdown parsing, we always embed images via a URL (data: URL).
+            // For SVG files read as text, we must convert the text to a valid data URL
+            // (otherwise markdown-it treats ![](<svg ...>) as plain text).
+            let embedUrl = content;
+
             if (isSvg) {
-                // Store SVG content for post-processing (strip XML declaration)
                 let svgContent = content;
-                if (typeof content === 'string') {
-                    svgContent = content.replace(/<\?xml.*?\?>/g, '').trim();
+                if (typeof svgContent === 'string') {
+                    svgContent = svgContent.replace(/<\?xml.*?\?>/g, '').trim();
                 }
                 svgFiles[file.name] = svgContent;
-                console.log(`Stored SVG: ${file.name}`);
+
+                try {
+                    // Encode SVG text as UTF-8 base64
+                    let b64;
+                    if (typeof TextEncoder !== 'undefined') {
+                        const bytes = new TextEncoder().encode(svgContent);
+                        let binary = '';
+                        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+                        b64 = btoa(binary);
+                    } else {
+                        // eslint-disable-next-line no-undef
+                        b64 = btoa(unescape(encodeURIComponent(svgContent)));
+                    }
+                    embedUrl = `data:image/svg+xml;base64,${b64}`;
+                } catch (err) {
+                    console.error('Failed to base64-encode SVG; leaving original reference unchanged:', err);
+                    embedUrl = null;
+                }
+            }
+
+            if (embedUrl) {
+                uploadedFiles[file.name] = embedUrl;
             }
             
             // Replace references in markdown
@@ -631,10 +692,14 @@ function handleReferenceFiles(files, references) {
                     const escapedPath = ref.path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                     const regex = new RegExp(`!\\[([^\\]]*)\\]\\(${escapedPath}\\)`, 'g');
                     
-                    // Always use Data URL for initial markdown conversion
-                    // SVGs will be post-processed after HTML generation
-                    currentMarkdownText = currentMarkdownText.replace(regex, `![$1](${content})`);
-                    console.log(`Embedded file: ${file.name}`);
+                    if (embedUrl) {
+                        // Always use a data URL for initial markdown conversion.
+                        // SVGs will be post-processed after HTML generation.
+                        currentMarkdownText = currentMarkdownText.replace(regex, `![$1](${embedUrl})`);
+                        console.log(`Embedded file: ${file.name}`);
+                    } else {
+                        console.warn(`Skipped embedding (no embedUrl): ${file.name}`);
+                    }
                 }
             });
             
