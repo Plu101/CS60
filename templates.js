@@ -38,7 +38,7 @@ const templates = {
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.8;
             color: var(--text-color);
             background-color: var(--bg-color);
@@ -218,7 +218,7 @@ const templates = {
         }
         
         code {
-            font-family: 'Consolas', 'Monaco', monospace;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             background: var(--code-bg);
             padding: 0.2rem 0.4rem;
             border-radius: 3px;
@@ -378,7 +378,7 @@ const templates = {
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.7;
             color: var(--text);
             background: var(--bg);
@@ -588,7 +588,7 @@ const templates = {
         }
         
         code {
-            font-family: 'Fira Code', 'Consolas', monospace;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 0.9em;
         }
         
@@ -726,7 +726,7 @@ const templates = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base target="_parent">
     <title>${metadata.title || 'Academic Assignment'}</title>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&subset=latin,latin-ext&family=Crimson+Text:wght@400;600;700&subset=latin,latin-ext&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
     <style>
@@ -734,7 +734,7 @@ const templates = {
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'EB Garamond', Georgia, 'Times New Roman', serif;
+            font-family: 'EB Garamond', Georgia, 'Times New Roman', Times, serif;
             line-height: 1.9;
             color: #2b2a27;
             background: #fffdf9;
@@ -824,7 +824,7 @@ const templates = {
         }
         
         code {
-            font-family: 'Crimson Text', 'EB Garamond', serif;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 0.9em;
             background: #f6f2e9;
             padding: 0.2rem 0.4rem;
@@ -926,14 +926,14 @@ const templates = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base target="_parent">
     <title>${metadata.title || 'Academic Paper'}</title>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&subset=latin,latin-ext&family=Crimson+Text:wght@400;600;700&subset=latin,latin-ext&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
     <style>
         .math-block { margin: 1.5rem 0; overflow-x: auto; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'EB Garamond', Georgia, 'Times New Roman', serif;
+            font-family: 'EB Garamond', Georgia, 'Times New Roman', Times, serif;
             color: #2b2a27;
             background: #fffdf9;
             max-width: 760px;
@@ -989,7 +989,7 @@ const templates = {
         img, svg { max-width: ${metadata.image_size || '80%'}; height: auto; display: block; margin: 1.5rem auto; border: 1px solid #e5dbc8; border-radius: 4px; }
         svg { background: #fff; border: 1px solid #ddd; }
         pre { background: #f6f2e9; border: 1px solid #e5dbc8; padding: 1rem; border-radius: 4px; overflow-x: auto; margin: 1rem 0; }
-        code { font-family: 'Crimson Text', 'EB Garamond', serif; background: #f6f2e9; padding: .2rem .4rem; border-radius: 3px; }
+        code { font-family: 'Consolas', 'Monaco', 'Courier New', monospace; background: #f6f2e9; padding: .2rem .4rem; border-radius: 3px; }
         table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
         th, td { padding: .75rem; border: 1px solid #e5dbc8; text-align: left; }
         th { background: #fffdf9; font-weight: 600; }
@@ -1058,7 +1058,7 @@ const templates = {
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Calibri', 'Arial', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             color: #000000;
             background: #ffffff;
@@ -1197,7 +1197,7 @@ const templates = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base target="_parent">
     <title>${metadata.title || 'Technical Report'}</title>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&subset=latin,latin-ext&family=IBM+Plex+Mono:wght@400;500&subset=latin,latin-ext&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
     <style>
@@ -1205,7 +1205,7 @@ const templates = {
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.75;
             color: #1e293b;
             background: #ffffff;
@@ -1375,7 +1375,7 @@ const templates = {
         }
         
         code {
-            font-family: 'IBM Plex Mono', 'Courier New', monospace;
+            font-family: 'IBM Plex Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 0.9em;
         }
         
@@ -1496,7 +1496,7 @@ const templates = {
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.7;
             color: #24292e;
             background: #ffffff;
@@ -1559,7 +1559,7 @@ const templates = {
         }
         
         code {
-            font-family: 'SF Mono', 'Consolas', monospace;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 0.9em;
             background: #f6f8fa;
             padding: 0.2rem 0.4rem;
